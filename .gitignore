@@ -1,0 +1,7 @@
+WebGLWorld/bin
+WebGLWorld/obj
+WebGLWorld/threejs/examples
+*.user
+Thumbs.db
+*.orig
+*.suo
