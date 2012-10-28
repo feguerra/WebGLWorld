@@ -194,4 +194,8 @@ interface ThreeModule {
 
 	ShaderFlares(...params: any[]): any;
 	ShaderSprite(...params: any[]): any;
+
+    // no documentado
+    FlatShading(...params: any[]): any;
+    ColladaLoader(...params: any[]): any;
 }

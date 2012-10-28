@@ -22,7 +22,7 @@
   <ItemGroup>
     <Content Include="app.css" />
     <Content Include="app_pablo.ts" />
-	<Content Include="app_pablo.js">
+    <Content Include="app_pablo.js">
       <DependentUpon>app_pablo.ts</DependentUpon>
     </Content>
     <Content Include="index.html" />
@@ -34,6 +34,11 @@
     <Content Include="js\file1.js">
       <DependentUpon>terreno.ts</DependentUpon>
     </Content>
+    <TypeScriptCompile Include="js\monkey.ts" />
+    <Content Include="models\monkeymodel.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="vendor\ColladaLoader.js" />
     <Content Include="vendor\jquery-1.8.2.js" />
     <Content Include="vendor\jquery-1.8.2.min.js">
       <DependentUpon>jquery-1.8.2.js</DependentUpon>
@@ -49,6 +54,17 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="vendor\three.d.ts" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="web.config" />
+    <Content Include="web.Release.config">
+      <DependentUpon>web.config</DependentUpon>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="models\monkey_model.dae">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
@@ -66,7 +82,7 @@
         <WebProjectProperties>
           <UseIIS>True</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>0</DevelopmentServerPort>
+          <DevelopmentServerPort>5225</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>http://localhost:1383/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
@@ -80,10 +96,9 @@
   </ProjectExtensions>
   <Target Name="BeforeBuild">
     <!-- <Exec Command="&quot;$(PROGRAMFILES)\Microsoft SDKs\TypeScript\0.8.0.0\tsc&quot; @(TypeScriptCompile ->'&quot;%(fullpath)&quot;', ' ')" /> -->
-	<Exec Command="echo Building app.js..." />
+    <Exec Command="echo Building app.js..." />
     <Exec Command="&quot;$(PROGRAMFILES)\Microsoft SDKs\TypeScript\0.8.0.0\tsc&quot; --out app.js app.ts" />
-	
-	<Exec Command="echo Building app_pablo.js..." />
+    <Exec Command="echo Building app_pablo.js..." />
     <Exec Command="&quot;$(PROGRAMFILES)\Microsoft SDKs\TypeScript\0.8.0.0\tsc&quot; --out app_pablo.js app_pablo.ts" />
   </Target>
 </Project>

@@ -2,9 +2,27 @@ var Terreno = (function () {
     function Terreno() { }
     return Terreno;
 })();
+var Monkey = (function () {
+    function Monkey(path, callback) {
+        var loader = new THREE.ColladaLoader();
+        loader.options.convertUpAxis = true;
+        loader.load(path, function (collada) {
+            this.dae = collada.scene;
+            this.dae.scale.x = this.dae.scale.y = this.dae.scale.z = 20;
+            callback();
+        });
+    }
+    Monkey.prototype.getModel = function () {
+        return this.mesh;
+    };
+    return Monkey;
+})();
 $(document).ready(function () {
     var world = new World();
-    world.animate();
+    var mon = new Monkey('models/monkey_model.dae', function () {
+        world.addModel(mon.getModel());
+        world.animate();
+    });
     var terr = new Terreno();
 });
 var World = (function () {
@@ -14,21 +32,15 @@ var World = (function () {
         this.camera = new THREE.PerspectiveCamera(75, this.canvasWidth / this.canvasHeight, 1, 10000);
         this.camera.position.z = 1000;
         this.scene = new THREE.Scene();
-        var geometry = new THREE.CubeGeometry(200, 200, 200);
-        var material = new THREE.MeshBasicMaterial({
-            color: 13369344,
-            wireframe: false
-        });
-        this.mesh = new THREE.Mesh(geometry, material);
-        this.scene.add(this.mesh);
         this.renderer = new THREE.CanvasRenderer();
         this.renderer.setSize(this.canvasWidth, this.canvasHeight);
         document.body.appendChild(this.renderer.domElement);
     }
+    World.prototype.addModel = function (model) {
+        this.scene.add(model);
+    };
     World.prototype.animate = function () {
         var _this = this;
-        this.mesh.rotation.x += 0.01;
-        this.mesh.rotation.y += 0.02;
         this.renderer.render(this.scene, this.camera);
         requestAnimationFrame(function () {
             return _this.animate();
