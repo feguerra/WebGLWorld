@@ -38,7 +38,15 @@
     <Content Include="models\monkeymodel.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="vendor\ColladaLoader.js" />
+    <Content Include="vendor\ColladaLoader.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="vendor\controls\FirstPersonControls.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="vendor\controls\FlyControls.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="vendor\jquery-1.8.2.js" />
     <Content Include="vendor\jquery-1.8.2.min.js">
       <DependentUpon>jquery-1.8.2.js</DependentUpon>
