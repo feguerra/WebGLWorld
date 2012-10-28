@@ -2,29 +2,29 @@
 
 
 class Monkey {
-    private mesh;
-    private dae;
+    private path;
+    public dae;
     private skin;
 
-    constructor (path, callback) {
+    constructor (path) {
+        this.path = path;
+    }
+
+    load(callback) {
         var loader = new THREE.ColladaLoader();
         loader.options.convertUpAxis = true;
 
-        loader.load(path, function (collada) {
-            this.dae = collada.scene;
-            //this.skin = collada.skins[0];
+        var monkey = this;
+        loader.load(this.path, function (collada) {
+            monkey.dae = collada.scene;
+            monkey.skin = collada.skins[0];
             
-            this.dae.scale.x = this.dae.scale.y = this.dae.scale.z = 20;
-            //this.dae.position.x = -1;
-            //this.dae.updateMatrix();
+            monkey.dae.scale.x = monkey.dae.scale.y = monkey.dae.scale.z = 0.002;
+            monkey.dae.updateMatrix();
 
             callback();
+        }, function (info) {
+            //console.info("total: " + info["total"] + ", loaded: " + +info["loaded"]);
         });
     }
-
-    getModel()
-    {
-        return this.mesh;
-    }
-    
 }

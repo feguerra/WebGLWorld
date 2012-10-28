@@ -31,22 +31,19 @@
     </Content>
     <TypeScriptCompile Include="js\terreno.ts" />
     <Content Include="index_pablo.html" />
-    <Content Include="js\file1.js">
-      <DependentUpon>terreno.ts</DependentUpon>
-    </Content>
     <TypeScriptCompile Include="js\monkey.ts" />
     <Content Include="models\monkeymodel.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="vendor\ColladaLoader.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <Content Include="models\monster\monster.jpg" />
     <Content Include="vendor\controls\FirstPersonControls.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="vendor\controls\FlyControls.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="models\monster\readme.txt" />
+    <Content Include="vendor\ColladaLoader.js" />
     <Content Include="vendor\jquery-1.8.2.js" />
     <Content Include="vendor\jquery-1.8.2.min.js">
       <DependentUpon>jquery-1.8.2.js</DependentUpon>
@@ -73,6 +70,9 @@
     <Content Include="models\monkey_model.dae">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="models\monster\monster.dae" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
