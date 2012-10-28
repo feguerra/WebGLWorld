@@ -198,4 +198,5 @@ interface ThreeModule {
     // no documentado
     FlatShading(...params: any[]): any;
     ColladaLoader(...params: any[]): any;
+    LinePieces(...params: any[]): any;
 }

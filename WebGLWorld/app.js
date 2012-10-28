@@ -1,5 +1,23 @@
 var Terreno = (function () {
-    function Terreno() { }
+    function Terreno() {
+        this.size = 14;
+        this.step = 1;
+    }
+    Terreno.prototype.load = function (callback) {
+        var geometry = new THREE.Geometry();
+        var material = new THREE.LineBasicMaterial({
+            color: 13421772,
+            opacity: 0.2
+        });
+        for(var i = -this.size; i <= this.size; i += this.step) {
+            geometry.vertices.push(new THREE.Vector3(-this.size, -0.04, i));
+            geometry.vertices.push(new THREE.Vector3(this.size, -0.04, i));
+            geometry.vertices.push(new THREE.Vector3(i, -0.04, -this.size));
+            geometry.vertices.push(new THREE.Vector3(i, -0.04, this.size));
+        }
+        this.mesh = new THREE.Line(geometry, material, THREE.LinePieces);
+        callback();
+    };
     return Terreno;
 })();
 $(document).ready(function () {
