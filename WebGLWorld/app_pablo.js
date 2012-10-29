@@ -68,7 +68,7 @@ $(document).ready(function () {
 });
 var World = (function () {
     function World() {
-        this.canvasWidth = 640;
+        this.canvasWidth = window.innerWidth;
         this.canvasHeight = 480;
         this.camera = new THREE.PerspectiveCamera(45, this.canvasWidth / this.canvasHeight, 1, 2000);
         this.camera.position.set(0, 5, 10);

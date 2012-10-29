@@ -8,13 +8,7 @@ $(document).ready(function() {
 
     var world = new World();
     world.animate(); 
-
-    /*var geometry = new THREE.CubeGeometry(200, 200, 200); 
-    var material = new THREE.MeshBasicMaterial({ color: 0xcc0000, wireframe: false });
-    var cubo = new THREE.Mesh(geometry, material);
-    world.addMesh(cubo);
-    */
-
+        
     var mon = new Monkey('models/monster/monster.dae');
     mon.load(function () {
         world.addMesh(mon.dae);
@@ -46,7 +40,7 @@ $(document).ready(function() {
 
 /// Clase que contiene todos los elementos de WebGL + ThreeJS
 class World {
-    private canvasWidth = 640;
+    private canvasWidth = window.innerWidth;
     private canvasHeight = 480;
     public scene; 
     public camera;
