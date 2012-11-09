@@ -9,7 +9,9 @@ $(document).ready(function() {
     var world = new World();
     world.animate(); 
         
-    var mon = new Monkey('models/monster/monster.dae');
+    var mon = new Monkey('models/monkey/monkey.dae');
+    //var mon = new Monkey('models/monster/monster.dae');
+
     mon.load(function () {
         world.addMesh(mon.dae);
         world.camera.lookAt(mon.dae.position);

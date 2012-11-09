@@ -30,7 +30,6 @@ var Monkey = (function () {
         var monkey = this;
         loader.load(this.path, function (collada) {
             monkey.dae = collada.scene;
-            monkey.skin = collada.skins[0];
             monkey.dae.scale.x = monkey.dae.scale.y = monkey.dae.scale.z = 0.002;
             monkey.dae.updateMatrix();
             callback();
@@ -42,7 +41,7 @@ var Monkey = (function () {
 $(document).ready(function () {
     var world = new World();
     world.animate();
-    var mon = new Monkey('models/monster/monster.dae');
+    var mon = new Monkey('models/monkey/monkey.dae');
     mon.load(function () {
         world.addMesh(mon.dae);
         world.camera.lookAt(mon.dae.position);

@@ -33,9 +33,6 @@
     <Content Include="index_pablo.html" />
     <TypeScriptCompile Include="js\monkey.ts" />
     <Content Include="models\butterfly\textures\butterflywings.png" />
-    <Content Include="models\monkeymodel.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="models\monster\monster.jpg" />
     <Content Include="vendor\controls\FirstPersonControls.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -68,15 +65,15 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="models\monkey_model.dae">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="models\monster\monster.dae" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="models\butterfly\butterfly2.dae" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="models\monkey\monkey.dae">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

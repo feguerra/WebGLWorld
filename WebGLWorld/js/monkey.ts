@@ -17,7 +17,7 @@ class Monkey {
         var monkey = this;
         loader.load(this.path, function (collada) {
             monkey.dae = collada.scene;
-            monkey.skin = collada.skins[0];
+            //monkey.skin = collada.skins[0];
             
             monkey.dae.scale.x = monkey.dae.scale.y = monkey.dae.scale.z = 0.002;
             monkey.dae.updateMatrix();
