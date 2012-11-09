@@ -29,9 +29,10 @@ var Monkey = (function () {
         loader.options.convertUpAxis = true;
         var monkey = this;
         loader.load(this.path, function (collada) {
-            monkey.dae = collada.scene;
-            monkey.dae.scale.x = monkey.dae.scale.y = monkey.dae.scale.z = 0.002;
-            monkey.dae.updateMatrix();
+            monkey.mesh = collada.scene;
+            monkey.skin = collada.skins[0];
+            monkey.mesh.scale.x = monkey.mesh.scale.y = monkey.mesh.scale.z = 0.002;
+            monkey.mesh.updateMatrix();
             callback();
         }, function (info) {
         });
@@ -40,35 +41,38 @@ var Monkey = (function () {
 })();
 $(document).ready(function () {
     var world = new World();
-    world.animate();
-    var mon = new Monkey('models/monkey/monkey.dae');
+    var mon = new Monkey('models/monster/monster.dae');
     mon.load(function () {
-        world.addMesh(mon.dae);
-        world.camera.lookAt(mon.dae.position);
+        world.addMesh(mon);
+        world.model = mon;
+        world.camera.lookAt(mon.mesh.position);
         console.info("model cargado!");
     });
     var grid = new Terreno();
     grid.load(function () {
-        world.addMesh(grid.mesh);
+        world.addMesh(grid);
         console.info("grid cargado!");
     });
     $('#posX').change(function () {
         world.camera.position.x = $(this).val();
-        world.camera.lookAt(mon.dae.position);
+        world.camera.lookAt(mon.mesh.position);
     });
     $('#posY').change(function () {
         world.camera.position.y = $(this).val();
-        world.camera.lookAt(mon.dae.position);
+        world.camera.lookAt(mon.mesh.position);
     });
     $('#posZ').change(function () {
         world.camera.position.z = $(this).val();
-        world.camera.lookAt(mon.dae.position);
+        world.camera.lookAt(mon.mesh.position);
     });
+    world.animate();
 });
 var World = (function () {
     function World() {
         this.canvasWidth = window.innerWidth;
         this.canvasHeight = 480;
+        this.t = 0;
+        this.clock = new THREE.Clock();
         this.camera = new THREE.PerspectiveCamera(45, this.canvasWidth / this.canvasHeight, 1, 2000);
         this.camera.position.set(0, 5, 10);
         this.scene = new THREE.Scene();
@@ -81,18 +85,30 @@ var World = (function () {
         document.body.appendChild(this.renderer.domElement);
     }
     World.prototype.addMesh = function (model) {
-        if(model == null) {
+        var mesh = model.mesh;
+        if(mesh == null) {
             console.error("undefined model");
         } else {
-            this.scene.add(model);
+            this.scene.add(mesh);
         }
     };
     World.prototype.animate = function () {
         var _this = this;
-        this.renderer.render(this.scene, this.camera);
+        var delta = this.clock.getDelta();
         requestAnimationFrame(function () {
             return _this.animate();
         });
+        if(this.t > 1) {
+            this.t = 0;
+        }
+        if(this.model.skin) {
+            for(var i = 0; i < this.model.skin.morphTargetInfluences.length; i++) {
+                this.model.skin.morphTargetInfluences[i] = 0;
+            }
+            this.model.skin.morphTargetInfluences[Math.floor(this.t * 30)] = 1;
+            this.t += delta;
+        }
+        this.renderer.render(this.scene, this.camera);
     };
     return World;
 })();

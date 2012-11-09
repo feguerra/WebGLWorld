@@ -3,8 +3,8 @@
 
 class Monkey {
     private path;
-    public dae;
-    private skin;
+    public mesh;
+    public skin;
 
     constructor (path) {
         this.path = path;
@@ -16,11 +16,11 @@ class Monkey {
 
         var monkey = this;
         loader.load(this.path, function (collada) {
-            monkey.dae = collada.scene;
-            //monkey.skin = collada.skins[0];
+            monkey.mesh = collada.scene;
+            monkey.skin = collada.skins[0];
             
-            monkey.dae.scale.x = monkey.dae.scale.y = monkey.dae.scale.z = 0.002;
-            monkey.dae.updateMatrix();
+            monkey.mesh.scale.x = monkey.mesh.scale.y = monkey.mesh.scale.z = 0.002;
+            monkey.mesh.updateMatrix();
 
             callback();
         }, function (info) {
