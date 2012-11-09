@@ -47,6 +47,12 @@
       <DependentUpon>jquery-1.8.2.js</DependentUpon>
     </Content>
     <Content Include="vendor\jquery.d.ts" />
+    <Content Include="vendor\Physijs\physi.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="vendor\Physijs\physijs_worker.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="vendor\three.js" />
     <Content Include="vendor\three.min.js">
       <DependentUpon>three.js</DependentUpon>
