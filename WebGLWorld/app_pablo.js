@@ -76,10 +76,15 @@ var World = (function () {
         this.camera = new THREE.PerspectiveCamera(45, this.canvasWidth / this.canvasHeight, 1, 2000);
         this.camera.position.set(0, 5, 10);
         this.scene = new THREE.Scene();
-        var particleLight = new THREE.Mesh(new THREE.SphereGeometry(4, 8, 8), new THREE.MeshBasicMaterial({
-            color: 16777215
-        }));
         this.scene.add(new THREE.AmbientLight(13421772));
+        this.pointLight = new THREE.PointLight(16711680, 5, 50);
+        this.pointLight.position.set(0, 5, 5);
+        this.scene.add(this.pointLight);
+        this.pointLightModel = new THREE.Mesh(new THREE.SphereGeometry(0.5), new THREE.MeshBasicMaterial({
+            color: 16711680
+        }));
+        this.pointLightModel.position = this.pointLight.position;
+        this.scene.add(this.pointLightModel);
         this.renderer = new THREE.WebGLRenderer();
         this.renderer.setSize(this.canvasWidth, this.canvasHeight);
         document.body.appendChild(this.renderer.domElement);
@@ -107,6 +112,8 @@ var World = (function () {
             }
             this.model.skin.morphTargetInfluences[Math.floor(this.t * 30)] = 1;
             this.t += delta;
+            this.pointLight.position.x = 20 * (this.t - 0.5);
+            this.pointLightModel.position = this.pointLight.position;
         }
         this.renderer.render(this.scene, this.camera);
     };

@@ -53,6 +53,8 @@ class World {
     private renderer;
     
     public model;
+    public pointLight;
+    public pointLightModel; // mesh para saber donde esta la luz
 
     private t = 0;
     private clock = new THREE.Clock();
@@ -65,9 +67,15 @@ class World {
         this.scene = new THREE.Scene(); 
 
         // light
-        var particleLight = new THREE.Mesh( new THREE.SphereGeometry( 4, 8, 8 ), new THREE.MeshBasicMaterial( { color: 0xffffff } ) );
-		//this.scene.add( particleLight );
         this.scene.add( new THREE.AmbientLight( 0xcccccc ) );
+        // luz puntual
+        this.pointLight = new THREE.PointLight(0xff0000, 5, 50); 
+        this.pointLight.position.set(0, 5, 5); 
+        this.scene.add( this.pointLight );
+        // esfera para "ver" la luz puntual
+        this.pointLightModel = new THREE.Mesh( new THREE.SphereGeometry( 0.5 ), new THREE.MeshBasicMaterial( { color: 0xff0000 } ) );
+        this.pointLightModel.position = this.pointLight.position;
+		this.scene.add( this.pointLightModel );
         
         this.renderer = new THREE.WebGLRenderer();
 
@@ -106,6 +114,9 @@ class World {
             this.model.skin.morphTargetInfluences[Math.floor(this.t * 30)] = 1;
 
             this.t += delta;
+
+            this.pointLight.position.x = 20*(this.t - 0.5);
+            this.pointLightModel.position = this.pointLight.position;
         }
 
         this.renderer.render(this.scene, this.camera);
