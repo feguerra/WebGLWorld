@@ -25,6 +25,11 @@
     <Content Include="app_pablo.js">
       <DependentUpon>app_pablo.ts</DependentUpon>
     </Content>
+    <Content Include="app_fco.ts" />
+    <Content Include="app_fco.js">
+      <DependentUpon>app_fco.ts</DependentUpon>
+    </Content>
+    <Content Include="fisica.html" />
     <Content Include="index.html" />
     <Content Include="app.js">
       <DependentUpon>app.ts</DependentUpon>
@@ -32,6 +37,8 @@
     <TypeScriptCompile Include="js\terreno.ts" />
     <Content Include="index_pablo.html" />
     <TypeScriptCompile Include="js\monkey.ts" />
+    <TypeScriptCompile Include="js\physicModel.ts" />
+    <TypeScriptCompile Include="js\physicWorld.ts" />
     <Content Include="models\butterfly\textures\butterflywings.png" />
     <Content Include="models\monster\monster.jpg" />
     <Content Include="vendor\controls\FirstPersonControls.js">
@@ -47,12 +54,18 @@
       <DependentUpon>jquery-1.8.2.js</DependentUpon>
     </Content>
     <Content Include="vendor\jquery.d.ts" />
-    <Content Include="vendor\Physijs\physi.js" />
-    <TypeScriptCompile Include="vendor\Physijs\physijs.d.ts" />
-    <Content Include="vendor\Physijs\physijs.d.js">
-      <DependentUpon>physijs.d.ts</DependentUpon>
+    <Content Include="vendor\Physijs\ammo.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="vendor\Physijs\physijs_worker.js" />
+    <Content Include="vendor\Physijs\physi.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="vendor\Physijs\physijs.d.ts">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="vendor\Physijs\physijs_worker.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="vendor\three.js" />
     <Content Include="vendor\three.min.js">
       <DependentUpon>three.js</DependentUpon>
@@ -75,6 +88,11 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="models\butterfly\butterfly2.dae" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="models\monkey\monkey.dae">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
@@ -110,5 +128,7 @@
     <Exec Command="&quot;$(PROGRAMFILES)\Microsoft SDKs\TypeScript\0.8.0.0\tsc&quot; --out app.js app.ts" />
     <Exec Command="echo Building app_pablo.js..." />
     <Exec Command="&quot;$(PROGRAMFILES)\Microsoft SDKs\TypeScript\0.8.0.0\tsc&quot; --out app_pablo.js app_pablo.ts" />
+    <Exec Command="echo Building app_fco.js..." />
+    <Exec Command="&quot;$(PROGRAMFILES)\Microsoft SDKs\TypeScript\0.8.0.0\tsc&quot; --out app_fco.js app_fco.ts" />
   </Target>
 </Project>

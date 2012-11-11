@@ -112,7 +112,7 @@ interface ThreeModule {
 
 	ColorUtils(...params: any[]): any;
 	GeometryUtils(...params: any[]): any;
-	ImageUtils(...params: any[]): any;
+	ImageUtils: any;
 	SceneUtils(...params: any[]): any;
 	ShaderUtils(...params: any[]): any;
 
@@ -199,4 +199,6 @@ interface ThreeModule {
     FlatShading(...params: any[]): any;
     ColladaLoader(...params: any[]): any;
     LinePieces(...params: any[]): any;
+    RepeatWrapping;
+
 }
