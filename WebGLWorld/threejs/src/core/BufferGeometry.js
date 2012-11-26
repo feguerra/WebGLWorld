@@ -4,7 +4,9 @@
 
 THREE.BufferGeometry = function () {
 
-	this.id = THREE.GeometryCount ++;
+	THREE.GeometryLibrary.push( this );
+
+	this.id = THREE.GeometryIdCount ++;
 
 	// attributes
 
@@ -473,6 +475,13 @@ THREE.BufferGeometry.prototype = {
 
 		this.hasTangents = true;
 		this.tangentsNeedUpdate = true;
+
+	},
+
+	deallocate: function () {
+
+		var index = THREE.GeometryLibrary.indexOf( this );
+		if ( index !== -1 ) THREE.GeometryLibrary.splice( index, 1 );
 
 	}
 
