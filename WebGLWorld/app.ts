@@ -1,10 +1,10 @@
 /// <reference path="vendor/jquery.d.ts" />
 /// <reference path="vendor/three.d.ts" />
 /// <reference path="js/terreno.ts" />
+/// <reference path="js/Boids.ts" />
 
 // Codigo inicializacion
 $(document).ready(function() {
-
     var world = new World();
     world.animate();
 
@@ -22,18 +22,24 @@ class World {
     private renderer;
     private controls;
     private clock = new THREE.Clock();
+    private boids : Boids;
 
     constructor() {
         this.camera = new THREE.PerspectiveCamera(75, this.canvasWidth/this.canvasHeight, 1, 10000);
         this.camera.position.z = 1000;
-
+    
+        //----------------------------cubo --------------------------------
         this.scene = new THREE.Scene(); 
         var geometry = new THREE.CubeGeometry(200, 200, 200); 
         var material = new THREE.MeshBasicMaterial({ color: 0xcc0000, wireframe: false });
 
         this.mesh = new THREE.Mesh(geometry, material);
         this.scene.add(this.mesh);
-        
+        //---------------------end cubo -------------------------------
+
+        this.boids = new Boids();
+        this.boids.loadModel(this.scene);
+
         this.controls = new THREE.FirstPersonControls( this.camera );
 
 		this.controls.movementSpeed = 60;
@@ -53,6 +59,8 @@ class World {
         var delta = this.clock.getDelta(),
 		time = this.clock.getElapsedTime() * 5;
 		this.controls.update( delta );
+
+		this.boids.update();
 
         this.renderer.render(this.scene, this.camera);
                 

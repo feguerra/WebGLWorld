@@ -200,5 +200,6 @@ interface ThreeModule {
     ColladaLoader(...params: any[]): any;
     LinePieces(...params: any[]): any;
     RepeatWrapping;
+    DoubleSide;
 
 }

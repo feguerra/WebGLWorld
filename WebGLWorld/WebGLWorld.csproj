@@ -39,6 +39,9 @@
     <TypeScriptCompile Include="js\monkey.ts" />
     <TypeScriptCompile Include="js\physicModel.ts" />
     <TypeScriptCompile Include="js\physicWorld.ts" />
+    <Content Include="js\Bird.ts" />
+    <Content Include="js\Boids.ts" />
+    <Content Include="js\IModel.ts" />
     <Content Include="models\butterfly\textures\butterflywings.png" />
     <Content Include="models\monster\monster.jpg" />
     <Content Include="vendor\controls\FirstPersonControls.js">
