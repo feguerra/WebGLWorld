@@ -5,17 +5,21 @@ class Bird implements IModel {
     public position;
     public velocity;
     private	_acceleration;
+    private _scale = 13;
     private model;
 
     private vector = new THREE.Vector3();
-    private _width = 600;
-    private _height = 600;
-    private _depth = 200;
+    private _width = 2000;
+    private _height = 2000;
+    private _depth = 2000;
     private _goal;
-    private _neighborhoodRadius = 100;
+    private _neighborhoodRadius = 100000;
     private _maxSpeed = 6;
-    private _maxSteerForce = 0.1;
-    private _avoidWalls = false;
+    private _maxSteerForce = 0.2;
+    private _avoidWalls = true;
+    private _force_scalar = 8;
+    private _repulse_distance = 150;
+    private _steer_numerator = 0.5;
 
     constructor () {
         this.position = new THREE.Vector3();
@@ -24,11 +28,6 @@ class Bird implements IModel {
     }
 
     loadModel(scene, callback) {
-            //this.model = new THREE.Mesh(new BirdModel(), new THREE.MeshBasicMaterial({ color: Math.random() * 0xffffff, side: THREE.DoubleSide }));
-            //this.model = new THREE.Mesh(
-            //                new THREE.CubeGeometry(10, 10, 10),
-            //                new THREE.MeshBasicMaterial({ color: 0xcc0000, wireframe: false }));
-
             var loader = new THREE.JSONLoader();
             var bird = this;
 
@@ -37,46 +36,17 @@ class Bird implements IModel {
 					geometry.materials[ 0 ].morphNormals = true;
 					bird.morphColorsToFaceColors( geometry );
 					geometry.computeMorphNormals();
-                    
-                    //var material = new THREE.MeshLambertMaterial({ morphTargets: true, morphNormals: true, vertexColors: THREE.FaceColors});
-					//var material = new THREE.MeshPhongMaterial( {morphTargets: true, morphNormals: true} );
 					var material = new THREE.MeshFaceMaterial();
-					
 					var meshAnim = new THREE.MorphAnimMesh( geometry, material );
-					
 					meshAnim.duration = 1000;
-
-					var s = 20;
+                    
+					var s = bird._scale;
 					meshAnim.scale.set( s, s, s );
-					meshAnim.position.x = 0;
-                    meshAnim.position.y = 10;
-					scene.add( meshAnim );
+					meshAnim.position.set( bird.position.x, bird.position.y, bird.position.z );
 					bird.model = meshAnim;
-					//bird.morphs.push( meshAnim );
+					scene.add( bird.model );
 					callback();
                 } );
-            
-            /* loader.load( "models/flamingo.js", ( geometry, materials ) => { 
-                this.morphColorsToFaceColors(geometry);
-                geometry.computeMorphNormals();
-
-                var material = new THREE.MeshPhongMaterial( { color: 0xffcccc, specular: 0xffcccc, shininess: 20, morphTargets: true, morphNormals: true, vertexColors: THREE.FaceColors, shading: THREE.FlatShading } );
-                this.model = new THREE.MorphAnimMesh( geometry, material );
-                //this.model = new THREE.Mesh( geometry, new THREE.MeshFaceMaterial( materials ) );
-
-                //animacion
-                this.model.duration = 1000;
-
-                // mesh
-                this.model.position = this.position;
-                this.model.phase = Math.floor(Math.random() * 62.83);
-		        //this.model.scale.set( 30, 30, 30 );
-                this.model.scale.set( 1, 1, 1 );
-
-		        scene.add( this.model );
-
-			    callback();
-            });*/
     }
 
     morphColorsToFaceColors(geometry) {
@@ -89,76 +59,40 @@ class Bird implements IModel {
 		}
     }
 
-    getModel() {
-        return this.model;
-    }
-
-    update(delta) {
-        this.model.updateAnimation(1000 * delta);
-
-        /*for ( var i = 0; i < morphs.length; i ++ ) {
-
-					morph = morphs[ i ];
-					morph.updateAnimation( 1000 * delta );
-
-				}*/
-    }
-
-
-    setGoal(target) {
-        this._goal = target;
-    }
-
-    setAvoidWalls(value) {
-        this._avoidWalls = value;
-    }
-
-    setWorldSize(width, height, depth) {
-        this._width = width;
-        this._height = height;
-        this._depth = depth;
-    }
-
     run(boids) {
-        if (this._avoidWalls) {
+        if (this._avoidWalls) 
+            this.checkBounds();
 
-            this.vector.set(-this._width, this.position.y, this.position.z);
-            this.vector = this.avoid(this.vector);
-            this.vector.multiplyScalar(5);
-            this._acceleration.addSelf(this.vector);
+        this.vector.set(-this._width, this.position.y, this.position.z);
+        this.vector = this.avoid(this.vector);
+        this.vector.multiplyScalar(this._force_scalar);
+        this._acceleration.addSelf(this.vector);
 
-            this.vector.set(this._width, this.position.y, this.position.z);
-            this.vector = this.avoid(this.vector);
-            this.vector.multiplyScalar(5);
-            this._acceleration.addSelf(this.vector);
+        this.vector.set(this._width, this.position.y, this.position.z);
+        this.vector = this.avoid(this.vector);
+        this.vector.multiplyScalar(this._force_scalar);
+        this._acceleration.addSelf(this.vector);
 
-            this.vector.set(this.position.x, -this._height, this.position.z);
-            this.vector = this.avoid(this.vector);
-            this.vector.multiplyScalar(5);
-            this._acceleration.addSelf(this.vector);
+        this.vector.set(this.position.x, -this._height, this.position.z);
+        this.vector = this.avoid(this.vector);
+        this.vector.multiplyScalar(this._force_scalar);
+        this._acceleration.addSelf(this.vector);
 
-            this.vector.set(this.position.x, this._height, this.position.z);
-            this.vector = this.avoid(this.vector);
-            this.vector.multiplyScalar(5);
-            this._acceleration.addSelf(this.vector);
+        this.vector.set(this.position.x, this._height, this.position.z);
+        this.vector = this.avoid(this.vector);
+        this.vector.multiplyScalar(this._force_scalar);
+        this._acceleration.addSelf(this.vector);
 
-            this.vector.set(this.position.x, this.position.y, -this._depth);
-            this.vector = this.avoid(this.vector);
-            this.vector.multiplyScalar(5);
-            this._acceleration.addSelf(this.vector);
+        this.vector.set(this.position.x, this.position.y, -this._depth);
+        this.vector = this.avoid(this.vector);
+        this.vector.multiplyScalar(this._force_scalar);
+        this._acceleration.addSelf(this.vector);
 
-            this.vector.set(this.position.x, this.position.y, this._depth);
-            this.vector = this.avoid(this.vector);
-            this.vector.multiplyScalar(5);
-            this._acceleration.addSelf(this.vector);
-
-        }/* else {
-
-						this.checkBounds();
-
-					}
-					*/
-
+        this.vector.set(this.position.x, this.position.y, this._depth);
+        this.vector = this.avoid(this.vector);
+        this.vector.multiplyScalar(this._force_scalar);
+        this._acceleration.addSelf(this.vector);
+        
         if (Math.random() > 0.5) {
             this.flock(boids);
         }
@@ -166,7 +100,6 @@ class Bird implements IModel {
     }
 
     flock(boids) {
-
         if (this._goal) {
             this._acceleration.addSelf(this.reach(this._goal, 0.005));
         }
@@ -210,29 +143,23 @@ class Bird implements IModel {
     }
 
     repulse(target) {
-
         var distance = this.position.distanceTo(target);
 
-        if (distance < 150) {
-
+        if (distance < this._repulse_distance) {
             var steer = new THREE.Vector3();
-
             steer.sub(this.position, target);
-            steer.multiplyScalar(0.5 / distance);
-
+            steer.multiplyScalar(this._steer_numerator / distance);
             this._acceleration.addSelf(steer);
         }
     }
 
     reach(target, amount) {
-
         var steer = new THREE.Vector3();
 
         steer.sub(target, this.position);
         steer.multiplyScalar(amount);
 
         return steer;
-
     }
 
     alignment(boids) {
@@ -240,15 +167,12 @@ class Bird implements IModel {
                    count = 0;
 
         for (var i = 0, il = boids.length; i < il; i++) {
-
             if (Math.random() > 0.6) continue;
 
             boid = boids[i];
-
             var distance = boid.position.distanceTo(this.position);
 
             if (distance > 0 && distance <= this._neighborhoodRadius) {
-
                 velSum.addSelf(boid.velocity);
                 count++;
             }
@@ -274,24 +198,19 @@ class Bird implements IModel {
                    count = 0;
 
         for (var i = 0, il = boids.length; i < il; i++) {
-
             if (Math.random() > 0.6) continue;
 
             boid = boids[i];
             distance = boid.position.distanceTo(this.position);
 
             if (distance > 0 && distance <= this._neighborhoodRadius) {
-
                 posSum.addSelf(boid.position);
                 count++;
             }
-
         }
 
         if (count > 0) {
-
             posSum.divideScalar(count);
-
         }
 
         steer.sub(posSum, this.position);
@@ -299,9 +218,7 @@ class Bird implements IModel {
         var l = steer.length();
 
         if (l > this._maxSteerForce) {
-
             steer.divideScalar(l / this._maxSteerForce);
-
         }
 
         return steer;
@@ -329,5 +246,30 @@ class Bird implements IModel {
             }
         }
         return posSum;
+    }
+
+    getModel() {
+        return this.model;
+    }
+
+    update(delta) {
+        this.model.updateAnimation(1000 * delta);
+        this.model.position.set(this.position.x, this.position.y, this.position.z);
+        this.model.rotation.y = Math.PI/2 - Math.atan2(-this.velocity.z, this.velocity.x);
+        this.model.rotation.z = 3*Math.PI/2 - Math.asin(this.velocity.y / this.velocity.length());
+    }
+
+    setGoal(target) {
+        this._goal = target;
+    }
+
+    setAvoidWalls(value) {
+        this._avoidWalls = value;
+    }
+
+    setWorldSize(width, height, depth) {
+        this._width = width;
+        this._height = height;
+        this._depth = depth;
     }
 }

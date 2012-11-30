@@ -2,13 +2,10 @@
 /// <reference path="vendor/three.d.ts" />
 /// <reference path="js/terreno.ts" />
 /// <reference path="js/Boids.ts" />
-
+var world;
 // Codigo inicializacion
 $(document).ready(function() {
-    var world = new World();
-    //world.animate();
-
-    var terr = new Terreno();   //Test: usar clases de otros archivos *.ts
+    world = new World();
 });
 
 
@@ -26,7 +23,7 @@ class World {
 
     constructor() {
         this.camera = new THREE.PerspectiveCamera(75, this.canvasWidth/this.canvasHeight, 1, 10000);
-        this.camera.position.z = 1000;
+        this.camera.position.z = 600;
     
         //----------------------------cubo --------------------------------
         this.scene = new THREE.Scene(); 
@@ -39,7 +36,8 @@ class World {
 
         //-------------------- terreno -------------------------------
         // GROUND
-		var groundGeo = new THREE.PlaneGeometry( 10000, 10000 );
+	/*
+        	var groundGeo = new THREE.PlaneGeometry( 10000, 10000 );
 		var groundMat = new THREE.MeshPhongMaterial( { ambient: 0xffffff, color: 0xffffff, specular: 0x050505 } );
 		groundMat.color.setHSV( 0.095, 0.5, 1 );
 
@@ -49,8 +47,16 @@ class World {
 		this.scene.add( ground );
 
 		ground.receiveShadow = true;
+    */
         // --------------------------------------------------------
 
+        //-------------- lights -------------------------
+		var light = new THREE.DirectionalLight(0x111111, 100);
+		light.position.x = 20;
+		light.position.y = 20;
+		this.scene.add(light);
+        //-------------- end lights -------------------------
+        
         this.controls = new THREE.FirstPersonControls( this.camera );
 
 		this.controls.movementSpeed = 60;
@@ -58,7 +64,7 @@ class World {
 		this.controls.noFly = true;
 		this.controls.lookVertical = false;
         
-        this.renderer = new THREE.CanvasRenderer();
+        this.renderer = new THREE.WebGLRenderer();
         this.renderer.setSize(this.canvasWidth, this.canvasHeight);
         $('#canvas-wrapper').append($(this.renderer.domElement));
 

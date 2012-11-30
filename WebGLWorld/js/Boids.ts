@@ -4,7 +4,7 @@
 
 class Boids implements IModel {
     private boids : Bird[];
-    private _num_birds = 3;
+    private _num_birds = 6;
 
     constructor () {
         this.boids = [];
@@ -12,16 +12,15 @@ class Boids implements IModel {
         for (var i = 0; i < this._num_birds; i++) {
 
             var boid = this.boids[i] = new Bird();
-            boid.position.x = Math.random() * 400 - 200;
-            boid.position.y = Math.random() * 400 - 200;
-            boid.position.z = Math.random() * 400 - 200;
-            boid.velocity.x = Math.random() * 2 - 1;
-            boid.velocity.y = Math.random() * 2 - 1;
-            boid.velocity.z = Math.random() * 2 - 1;
+            boid.position.x = Math.random() * 200 - 100;
+            boid.position.y = Math.random() * 200 - 100;
+            boid.position.z = Math.random() * 200 - 100;
+            boid.velocity.x = Math.random() * 4 - 2;
+            boid.velocity.y = Math.random() * 4 - 2;
+            boid.velocity.z = Math.random() * 4 - 2;
             boid.setAvoidWalls(true);
-            boid.setWorldSize(500, 500, 400);
-            //boid.loadModel();
-            //scene.add(boid.getModel());
+            boid.setGoal(new THREE.Vector3());
+            boid.setWorldSize(1500 , 1500, 1500);
         }
     }
 
@@ -59,8 +58,6 @@ class Boids implements IModel {
             var bird = boid.getModel();
             
             if (bird != undefined) {
-                bird.rotation.y = Math.atan2(-boid.velocity.z, boid.velocity.x);
-                bird.rotation.z = Math.asin(boid.velocity.y / boid.velocity.length());
                 boid.update(delta);
             }
         }
