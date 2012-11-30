@@ -6,7 +6,7 @@
 // Codigo inicializacion
 $(document).ready(function() {
     var world = new World();
-    world.animate();
+    //world.animate();
 
     var terr = new Terreno();   //Test: usar clases de otros archivos *.ts
 });
@@ -34,11 +34,22 @@ class World {
         var material = new THREE.MeshBasicMaterial({ color: 0xcc0000, wireframe: false });
 
         this.mesh = new THREE.Mesh(geometry, material);
-        this.scene.add(this.mesh);
+        //this.scene.add(this.mesh);
         //---------------------end cubo -------------------------------
 
-        this.boids = new Boids();
-        this.boids.loadModel(this.scene);
+        //-------------------- terreno -------------------------------
+        // GROUND
+		var groundGeo = new THREE.PlaneGeometry( 10000, 10000 );
+		var groundMat = new THREE.MeshPhongMaterial( { ambient: 0xffffff, color: 0xffffff, specular: 0x050505 } );
+		groundMat.color.setHSV( 0.095, 0.5, 1 );
+
+		var ground = new THREE.Mesh( groundGeo, groundMat );
+		ground.rotation.x = -Math.PI/2;
+		ground.position.y = -33;
+		this.scene.add( ground );
+
+		ground.receiveShadow = true;
+        // --------------------------------------------------------
 
         this.controls = new THREE.FirstPersonControls( this.camera );
 
@@ -50,9 +61,17 @@ class World {
         this.renderer = new THREE.CanvasRenderer();
         this.renderer.setSize(this.canvasWidth, this.canvasHeight);
         $('#canvas-wrapper').append($(this.renderer.domElement));
+
+        this.boids = new Boids();
+        this.boids.loadModel(this.scene, () => {
+            this.animate();
+        });
     }
 
     animate() {
+        // Prepararse para dibujar siguiente frame:
+        requestAnimationFrame(() => this.animate());
+
         this.mesh.rotation.x += 0.01;
         this.mesh.rotation.y += 0.02;
         
@@ -60,11 +79,8 @@ class World {
 		time = this.clock.getElapsedTime() * 5;
 		this.controls.update( delta );
 
-		this.boids.update();
+		this.boids.update(delta);
 
-        this.renderer.render(this.scene, this.camera);
-                
-        // Prepararse para dibujar siguiente frame:
-        requestAnimationFrame(() => this.animate());
+        this.renderer.render(this.scene, this.camera);        
     }
 }

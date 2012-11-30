@@ -43,6 +43,10 @@
     <Content Include="js\Boids.ts" />
     <Content Include="js\IModel.ts" />
     <Content Include="models\butterfly\textures\butterflywings.png" />
+    <Content Include="models\flamingo.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="models\MarioBros\rig_mario.js" />
     <Content Include="models\monster\monster.jpg" />
     <Content Include="vendor\controls\FirstPersonControls.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

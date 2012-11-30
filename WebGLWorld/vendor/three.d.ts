@@ -110,11 +110,11 @@ interface ThreeModule {
 
 	//Extras
 
-	ColorUtils(...params: any[]): any;
-	GeometryUtils(...params: any[]): any;
+	ColorUtils: any;
+	GeometryUtils: any;
 	ImageUtils: any;
-	SceneUtils(...params: any[]): any;
-	ShaderUtils(...params: any[]): any;
+	SceneUtils: any;
+	ShaderUtils: any;
 
 	//Extras / Animation
 
@@ -201,5 +201,6 @@ interface ThreeModule {
     LinePieces(...params: any[]): any;
     RepeatWrapping;
     DoubleSide;
+    FaceColors;
 
 }

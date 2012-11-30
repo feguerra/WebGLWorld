@@ -34,18 +34,40 @@ var Bird = (function () {
         this.velocity = new THREE.Vector3();
         this._acceleration = new THREE.Vector3();
     }
-    Bird.prototype.loadModel = function () {
-        this.model = new THREE.Mesh(new THREE.CubeGeometry(10, 10, 10), new THREE.MeshBasicMaterial({
-            color: 13369344,
-            wireframe: false
-        }));
-        this.model.phase = Math.floor(Math.random() * 62.83);
-        this.model.position = this.position;
+    Bird.prototype.loadModel = function (scene, callback) {
+        var loader = new THREE.JSONLoader();
+        var bird = this;
+        loader.load("models/MarioBros/rig_mario.js", function (geometry) {
+            geometry.materials[0].morphTargets = true;
+            geometry.materials[0].morphNormals = true;
+            bird.morphColorsToFaceColors(geometry);
+            geometry.computeMorphNormals();
+            var material = new THREE.MeshFaceMaterial();
+            var meshAnim = new THREE.MorphAnimMesh(geometry, material);
+            meshAnim.duration = 1000;
+            var s = 20;
+            meshAnim.scale.set(s, s, s);
+            meshAnim.position.x = 0;
+            meshAnim.position.y = 10;
+            scene.add(meshAnim);
+            bird.model = meshAnim;
+            callback();
+        });
+    };
+    Bird.prototype.morphColorsToFaceColors = function (geometry) {
+        if(geometry.morphColors && geometry.morphColors.length) {
+            var colorMap = geometry.morphColors[0];
+            for(var i = 0; i < colorMap.colors.length; i++) {
+                geometry.faces[i].color = colorMap.colors[i];
+                THREE.ColorUtils.adjustHSV(geometry.faces[i].color, 0, -0.1, 0);
+            }
+        }
     };
     Bird.prototype.getModel = function () {
         return this.model;
     };
-    Bird.prototype.update = function () {
+    Bird.prototype.update = function (delta) {
+        this.model.updateAnimation(1000 * delta);
     };
     Bird.prototype.setGoal = function (target) {
         this._goal = target;
@@ -227,7 +249,7 @@ var Bird = (function () {
 })();
 var Boids = (function () {
     function Boids() {
-        this._num_birds = 300;
+        this._num_birds = 3;
         this.boids = [];
         for(var i = 0; i < this._num_birds; i++) {
             var boid = this.boids[i] = new Bird();
@@ -241,37 +263,48 @@ var Boids = (function () {
             boid.setWorldSize(500, 500, 400);
         }
     }
-    Boids.prototype.loadModel = function (scene) {
+    Boids.prototype.loadModel = function (scene, callback) {
+        var _this = this;
+        var count = 0;
         for(var i = 0; i < this._num_birds; i++) {
-            this.boids[i].loadModel();
-            scene.add(this.boids[i].getModel());
+            this.boids[i].loadModel(scene, function () {
+                count++;
+            });
         }
+        var lazy_wait = function () {
+            if(count < _this._num_birds) {
+                setTimeout(lazy_wait, 1000);
+            } else {
+                callback();
+            }
+        };
+        lazy_wait();
     };
     Boids.prototype.getModel = function () {
         throw new DOMException();
     };
-    Boids.prototype.update = function () {
-        for(var i = 0, il = this.boids.length; i < il; i++) {
+    Boids.prototype.update = function (delta) {
+        var il = this.boids.length;
+        for(var i = 0; i < il; i++) {
             var boid = this.boids[i];
             boid.run(this.boids);
-            var bird = this.boids[i].getModel();
-            var color = bird.material.color;
-            color.r = color.g = color.b = (500 - bird.position.z) / 1000;
-            bird.rotation.y = Math.atan2(-boid.velocity.z, boid.velocity.x);
-            bird.rotation.z = Math.asin(boid.velocity.y / boid.velocity.length());
-            bird.phase = (bird.phase + (Math.max(0, bird.rotation.z) + 0.1)) % 62.83;
-            bird.geometry.vertices[5].y = bird.geometry.vertices[4].y = Math.sin(bird.phase) * 5;
+            var bird = boid.getModel();
+            if(bird != undefined) {
+                bird.rotation.y = Math.atan2(-boid.velocity.z, boid.velocity.x);
+                bird.rotation.z = Math.asin(boid.velocity.y / boid.velocity.length());
+                boid.update(delta);
+            }
         }
     };
     return Boids;
 })();
 $(document).ready(function () {
     var world = new World();
-    world.animate();
     var terr = new Terreno();
 });
 var World = (function () {
     function World() {
+        var _this = this;
         this.canvasWidth = window.innerWidth;
         this.canvasHeight = 480;
         this.clock = new THREE.Clock();
@@ -284,9 +317,18 @@ var World = (function () {
             wireframe: false
         });
         this.mesh = new THREE.Mesh(geometry, material);
-        this.scene.add(this.mesh);
-        this.boids = new Boids();
-        this.boids.loadModel(this.scene);
+        var groundGeo = new THREE.PlaneGeometry(10000, 10000);
+        var groundMat = new THREE.MeshPhongMaterial({
+            ambient: 16777215,
+            color: 16777215,
+            specular: 328965
+        });
+        groundMat.color.setHSV(0.095, 0.5, 1);
+        var ground = new THREE.Mesh(groundGeo, groundMat);
+        ground.rotation.x = -Math.PI / 2;
+        ground.position.y = -33;
+        this.scene.add(ground);
+        ground.receiveShadow = true;
         this.controls = new THREE.FirstPersonControls(this.camera);
         this.controls.movementSpeed = 60;
         this.controls.lookSpeed = 0.05;
@@ -295,20 +337,24 @@ var World = (function () {
         this.renderer = new THREE.CanvasRenderer();
         this.renderer.setSize(this.canvasWidth, this.canvasHeight);
         $('#canvas-wrapper').append($(this.renderer.domElement));
+        this.boids = new Boids();
+        this.boids.loadModel(this.scene, function () {
+            _this.animate();
+        });
     }
     World.prototype.animate = function () {
         var _this = this;
+        requestAnimationFrame(function () {
+            return _this.animate();
+        });
         this.mesh.rotation.x += 0.01;
         this.mesh.rotation.y += 0.02;
         var delta = this.clock.getDelta();
         var time = this.clock.getElapsedTime() * 5;
 
         this.controls.update(delta);
-        this.boids.update();
+        this.boids.update(delta);
         this.renderer.render(this.scene, this.camera);
-        requestAnimationFrame(function () {
-            return _this.animate();
-        });
     };
     return World;
 })();

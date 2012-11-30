@@ -1,4 +1,5 @@
 ﻿/// <reference path="../vendor/three.d.ts" />
+/// <reference path="IModel.ts" />
 
 class Bird implements IModel {
     public position;
@@ -22,20 +23,85 @@ class Bird implements IModel {
         this._acceleration = new THREE.Vector3();
     }
 
-    loadModel() {
+    loadModel(scene, callback) {
             //this.model = new THREE.Mesh(new BirdModel(), new THREE.MeshBasicMaterial({ color: Math.random() * 0xffffff, side: THREE.DoubleSide }));
-            this.model = new THREE.Mesh(
-                            new THREE.CubeGeometry(10, 10, 10),
-                            new THREE.MeshBasicMaterial({ color: 0xcc0000, wireframe: false }));
-            this.model.phase = Math.floor(Math.random() * 62.83);
-            this.model.position = this.position;
+            //this.model = new THREE.Mesh(
+            //                new THREE.CubeGeometry(10, 10, 10),
+            //                new THREE.MeshBasicMaterial({ color: 0xcc0000, wireframe: false }));
+
+            var loader = new THREE.JSONLoader();
+            var bird = this;
+
+			loader.load( "models/MarioBros/rig_mario.js", function( geometry ) {				
+					geometry.materials[ 0 ].morphTargets = true;
+					geometry.materials[ 0 ].morphNormals = true;
+					bird.morphColorsToFaceColors( geometry );
+					geometry.computeMorphNormals();
+                    
+                    //var material = new THREE.MeshLambertMaterial({ morphTargets: true, morphNormals: true, vertexColors: THREE.FaceColors});
+					//var material = new THREE.MeshPhongMaterial( {morphTargets: true, morphNormals: true} );
+					var material = new THREE.MeshFaceMaterial();
+					
+					var meshAnim = new THREE.MorphAnimMesh( geometry, material );
+					
+					meshAnim.duration = 1000;
+
+					var s = 20;
+					meshAnim.scale.set( s, s, s );
+					meshAnim.position.x = 0;
+                    meshAnim.position.y = 10;
+					scene.add( meshAnim );
+					bird.model = meshAnim;
+					//bird.morphs.push( meshAnim );
+					callback();
+                } );
+            
+            /* loader.load( "models/flamingo.js", ( geometry, materials ) => { 
+                this.morphColorsToFaceColors(geometry);
+                geometry.computeMorphNormals();
+
+                var material = new THREE.MeshPhongMaterial( { color: 0xffcccc, specular: 0xffcccc, shininess: 20, morphTargets: true, morphNormals: true, vertexColors: THREE.FaceColors, shading: THREE.FlatShading } );
+                this.model = new THREE.MorphAnimMesh( geometry, material );
+                //this.model = new THREE.Mesh( geometry, new THREE.MeshFaceMaterial( materials ) );
+
+                //animacion
+                this.model.duration = 1000;
+
+                // mesh
+                this.model.position = this.position;
+                this.model.phase = Math.floor(Math.random() * 62.83);
+		        //this.model.scale.set( 30, 30, 30 );
+                this.model.scale.set( 1, 1, 1 );
+
+		        scene.add( this.model );
+
+			    callback();
+            });*/
+    }
+
+    morphColorsToFaceColors(geometry) {
+        if ( geometry.morphColors && geometry.morphColors.length ) {
+			var colorMap = geometry.morphColors[ 0 ];
+			for ( var i = 0; i < colorMap.colors.length; i ++ ) {
+				geometry.faces[ i ].color = colorMap.colors[ i ];
+				THREE.ColorUtils.adjustHSV( geometry.faces[ i ].color, 0, -0.1, 0 );
+			}
+		}
     }
 
     getModel() {
         return this.model;
     }
 
-    update() {
+    update(delta) {
+        this.model.updateAnimation(1000 * delta);
+
+        /*for ( var i = 0; i < morphs.length; i ++ ) {
+
+					morph = morphs[ i ];
+					morph.updateAnimation( 1000 * delta );
+
+				}*/
     }
 
 
@@ -112,18 +178,14 @@ class Bird implements IModel {
 
     move() {
         this.velocity.addSelf(this._acceleration);
-
         var l = this.velocity.length();
 
         if (l > this._maxSpeed) {
-
             this.velocity.divideScalar(l / this._maxSpeed);
-
         }
 
         this.position.addSelf(this.velocity);
         this._acceleration.set(0, 0, 0);
-
     }
 
     checkBounds() {
@@ -222,7 +284,6 @@ class Bird implements IModel {
 
                 posSum.addSelf(boid.position);
                 count++;
-
             }
 
         }

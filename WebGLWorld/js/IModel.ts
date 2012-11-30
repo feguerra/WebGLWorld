@@ -2,9 +2,9 @@
 
 interface IModel {
 
-    update();
+    update(delta);
 
-    loadModel(scene);
+    loadModel(scene, callback);
 
     getModel();
 

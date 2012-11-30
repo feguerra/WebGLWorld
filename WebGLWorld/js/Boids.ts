@@ -4,7 +4,7 @@
 
 class Boids implements IModel {
     private boids : Bird[];
-    private _num_birds = 300;
+    private _num_birds = 3;
 
     constructor () {
         this.boids = [];
@@ -25,33 +25,44 @@ class Boids implements IModel {
         }
     }
 
-    loadModel(scene) {
+    loadModel(scene, callback) {
+        var count = 0;
         for (var i = 0; i < this._num_birds; i++) {
-            this.boids[i].loadModel();
-            scene.add(this.boids[i].getModel());
+            this.boids[i].loadModel(scene, () => { 
+                count++; 
+            });
         }
+
+        // funcion que espera a que todos los modelos carguen
+        var lazy_wait = () => {
+            if (count < this._num_birds)
+                setTimeout(lazy_wait, 1000);
+            else
+                callback();
+        }
+
+        lazy_wait();
+        /**/
     }
 
     getModel() {
         throw new DOMException();
     }
 
-    update() {
-        for (var i = 0, il = this.boids.length; i < il; i++) {
+    update(delta) {
+        var il = this.boids.length;
+        for (var i = 0; i < il; i++) {
 
             var boid = this.boids[i];
             boid.run(this.boids);
 
-            var bird = this.boids[i].getModel();
-
-            var color = bird.material.color;
-            color.r = color.g = color.b = (500 - bird.position.z) / 1000;
-
-            bird.rotation.y = Math.atan2(-boid.velocity.z, boid.velocity.x);
-            bird.rotation.z = Math.asin(boid.velocity.y / boid.velocity.length());
-
-            bird.phase = (bird.phase + (Math.max(0, bird.rotation.z) + 0.1)) % 62.83;
-            bird.geometry.vertices[5].y = bird.geometry.vertices[4].y = Math.sin(bird.phase) * 5;
+            var bird = boid.getModel();
+            
+            if (bird != undefined) {
+                bird.rotation.y = Math.atan2(-boid.velocity.z, boid.velocity.x);
+                bird.rotation.z = Math.asin(boid.velocity.y / boid.velocity.length());
+                boid.update(delta);
+            }
         }
     }
 }
