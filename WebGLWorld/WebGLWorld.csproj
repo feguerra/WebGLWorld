@@ -48,6 +48,9 @@
     </Content>
     <Content Include="models\MarioBros\rig_mario.js" />
     <Content Include="models\monster\monster.jpg" />
+    <Content Include="models\scene\our_scene.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="vendor\controls\FirstPersonControls.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -101,6 +104,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
