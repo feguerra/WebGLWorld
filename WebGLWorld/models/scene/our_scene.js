@@ -400,17 +400,17 @@
 "geometries" :
 {
     "geo_Cube" : {
-        "type" : "ascii",
+        "type" : "ascii_mesh",
         "url"  : "scene.Cube.js"
     },
 
     "geo_Monkey" : {
-        "type" : "ascii",
+        "type" : "ascii_mesh",
         "url"  : "scene.Monkey.js"
     },
 
     "geo_Plane" : {
-        "type" : "ascii",
+        "type" : "ascii_mesh",
         "url"  : "scene.Plane.js"
     }
 },

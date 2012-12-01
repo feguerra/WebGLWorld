@@ -256,7 +256,7 @@ var Bird = (function () {
 })();
 var Boids = (function () {
     function Boids() {
-        this._num_birds = 6;
+        this._num_birds = 2;
         this.boids = [];
         for(var i = 0; i < this._num_birds; i++) {
             var boid = this.boids[i] = new Bird();
@@ -280,7 +280,7 @@ var Boids = (function () {
             if(r < 0.3) {
                 model_path = "models/MarioBros/mario_fire.js";
             } else {
-                if(r >= 0.3 && r < 0.6) {
+                if(r >= 0.25 && r < 0.5) {
                     model_path = "models/MarioBros/mario_mime.js";
                 }
             }
@@ -324,29 +324,30 @@ var World = (function () {
         this.canvasHeight = 480;
         this.clock = new THREE.Clock();
         this.camera = new THREE.PerspectiveCamera(75, this.canvasWidth / this.canvasHeight, 1, 10000);
-        this.camera.position.z = 600;
-        this.scene = new THREE.Scene();
-        var geometry = new THREE.CubeGeometry(200, 200, 200);
-        var material = new THREE.MeshBasicMaterial({
-            color: 13369344,
-            wireframe: false
-        });
-        this.mesh = new THREE.Mesh(geometry, material);
-        var light = new THREE.DirectionalLight(1118481, 100);
-        light.position.x = 20;
-        light.position.y = 20;
-        this.scene.add(light);
-        this.controls = new THREE.FirstPersonControls(this.camera);
-        this.controls.movementSpeed = 60;
-        this.controls.lookSpeed = 0.05;
-        this.controls.noFly = true;
-        this.controls.lookVertical = false;
+        this.camera.position.z = 100;
         this.renderer = new THREE.WebGLRenderer();
         this.renderer.setSize(this.canvasWidth, this.canvasHeight);
         $('#canvas-wrapper').append($(this.renderer.domElement));
-        this.boids = new Boids();
-        this.boids.loadModel(this.scene, function () {
-            _this.animate();
+        this.scene = new THREE.Scene();
+        var loader = new THREE.SceneLoader();
+        loader.load("models/scene/our_scene.js", function (loaded) {
+            _this.camera = loaded.currentCamera;
+            _this.camera.updateProjectionMatrix();
+            _this.scene = loaded.scene;
+            _this.renderer.setClearColor(loaded.bgColor, loaded.bgAlpha);
+            var light = new THREE.DirectionalLight(1118481, 100);
+            light.position.x = 20;
+            light.position.y = 20;
+            _this.scene.add(light);
+            _this.controls = new THREE.FirstPersonControls(_this.camera);
+            _this.controls.movementSpeed = 60;
+            _this.controls.lookSpeed = 0.02;
+            _this.controls.noFly = true;
+            _this.controls.lookVertical = true;
+            _this.boids = new Boids();
+            _this.boids.loadModel(_this.scene, function () {
+                _this.animate();
+            });
         });
     }
     World.prototype.animate = function () {
@@ -354,8 +355,6 @@ var World = (function () {
         requestAnimationFrame(function () {
             return _this.animate();
         });
-        this.mesh.rotation.x += 0.01;
-        this.mesh.rotation.y += 0.02;
         var delta = this.clock.getDelta();
         var time = this.clock.getElapsedTime() * 5;
 

@@ -22,12 +22,12 @@ class World {
 
     constructor() {
         this.camera = new THREE.PerspectiveCamera(75, this.canvasWidth/this.canvasHeight, 1, 10000);
-        this.camera.position.z = 600;
+        this.camera.position.z = 100;
 
         this.renderer = new THREE.WebGLRenderer();
         this.renderer.setSize(this.canvasWidth, this.canvasHeight);
         $('#canvas-wrapper').append($(this.renderer.domElement));
-
+        this.scene = new THREE.Scene();
         var loader = new THREE.SceneLoader();
 
 		loader.load( "models/scene/our_scene.js", ( loaded ) => {
