@@ -27,11 +27,11 @@ class Bird implements IModel {
         this._acceleration = new THREE.Vector3();
     }
 
-    loadModel(scene, callback) {
+    loadModel(model_path, scene, callback) {
             var loader = new THREE.JSONLoader();
             var bird = this;
 
-			loader.load( "models/MarioBros/rig_mario.js", function( geometry ) {				
+			loader.load( model_path, function( geometry ) {				
 					geometry.materials[ 0 ].morphTargets = true;
 					geometry.materials[ 0 ].morphNormals = true;
 					bird.morphColorsToFaceColors( geometry );

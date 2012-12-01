@@ -38,10 +38,10 @@ var Bird = (function () {
         this.velocity = new THREE.Vector3();
         this._acceleration = new THREE.Vector3();
     }
-    Bird.prototype.loadModel = function (scene, callback) {
+    Bird.prototype.loadModel = function (model_path, scene, callback) {
         var loader = new THREE.JSONLoader();
         var bird = this;
-        loader.load("models/MarioBros/rig_mario.js", function (geometry) {
+        loader.load(model_path, function (geometry) {
             geometry.materials[0].morphTargets = true;
             geometry.materials[0].morphNormals = true;
             bird.morphColorsToFaceColors(geometry);
@@ -275,7 +275,16 @@ var Boids = (function () {
         var _this = this;
         var count = 0;
         for(var i = 0; i < this._num_birds; i++) {
-            this.boids[i].loadModel(scene, function () {
+            var model_path = "models/MarioBros/mario_main.js";
+            var r = Math.random();
+            if(r < 0.3) {
+                model_path = "models/MarioBros/mario_fire.js";
+            } else {
+                if(r >= 0.3 && r < 0.6) {
+                    model_path = "models/MarioBros/mario_mime.js";
+                }
+            }
+            this.boids[i].loadModel(model_path, scene, function () {
                 count++;
             });
         }

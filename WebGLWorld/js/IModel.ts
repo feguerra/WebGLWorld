@@ -4,7 +4,7 @@ interface IModel {
 
     update(delta);
 
-    loadModel(scene, callback);
+    loadModel(model_path, scene, callback);
 
     getModel();
 
