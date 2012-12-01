@@ -27,7 +27,14 @@ class Boids implements IModel {
     loadModel(scene, callback) {
         var count = 0;
         for (var i = 0; i < this._num_birds; i++) {
-            this.boids[i].loadModel(scene, () => { 
+            var model_path = "models/MarioBros/mario_main.js";
+            var r = Math.random();
+            if(r<0.3)
+                model_path = "models/MarioBros/mario_fire.js";
+            else if(r>=0.25 && r<0.5)
+                model_path = "models/MarioBros/mario_mime.js";
+
+            this.boids[i].loadModel(model_path, scene, () => { 
                 count++; 
             });
         }
