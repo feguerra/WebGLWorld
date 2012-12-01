@@ -22,7 +22,8 @@ class World {
 
     constructor() {
         this.camera = new THREE.PerspectiveCamera(75, this.canvasWidth/this.canvasHeight, 1, 10000);
-        this.camera.position.z = 100;
+        this.camera.rotation.set(-0.8,0.1,0.1); 
+        this.camera.position.set(2,6.7,5.6);
 
         this.renderer = new THREE.WebGLRenderer();
         this.renderer.setSize(this.canvasWidth, this.canvasHeight);
@@ -30,7 +31,7 @@ class World {
         this.scene = new THREE.Scene();
         var loader = new THREE.SceneLoader();
 
-		loader.load( "models/scene/our_scene.js", ( loaded ) => {
+		loader.load( "models/js2/SandLandscape.js", ( loaded ) => {
             this.camera = loaded.currentCamera;
 			this.camera.updateProjectionMatrix();
             this.scene = loaded.scene;

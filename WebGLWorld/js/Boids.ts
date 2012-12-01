@@ -4,7 +4,7 @@
 
 class Boids implements IModel {
     private boids : Bird[];
-    private _num_birds = 2;
+    private _num_birds = 5;
 
     constructor () {
         this.boids = [];
@@ -12,12 +12,12 @@ class Boids implements IModel {
         for (var i = 0; i < this._num_birds; i++) {
 
             var boid = this.boids[i] = new Bird();
-            boid.position.x = Math.random() * 200 - 100;
-            boid.position.y = Math.random() * 200 - 100;
-            boid.position.z = Math.random() * 200 - 100;
-            boid.velocity.x = Math.random() * 4 - 2;
-            boid.velocity.y = Math.random() * 4 - 2;
-            boid.velocity.z = Math.random() * 4 - 2;
+            boid.position.x = Math.random() * 500 - 250;
+            boid.position.y = Math.random() * 500 - 250;
+            boid.position.z = Math.random() * 500 - 250;
+            boid.velocity.x = Math.random() * 1 - 0.5;
+            boid.velocity.y = Math.random() * 1 - 0.5;
+            boid.velocity.z = Math.random() * 1 - 0.5;
             boid.setAvoidWalls(true);
             boid.setGoal(new THREE.Vector3());
             boid.setWorldSize(1500 , 1500, 1500);

@@ -5,7 +5,7 @@ class Bird implements IModel {
     public position;
     public velocity;
     private	_acceleration;
-    private _scale = 13;
+    private _scale = 1;
     private model;
 
     private vector = new THREE.Vector3();
@@ -14,11 +14,11 @@ class Bird implements IModel {
     private _depth = 2000;
     private _goal;
     private _neighborhoodRadius = 100000;
-    private _maxSpeed = 6;
+    private _maxSpeed = 2;
     private _maxSteerForce = 0.2;
     private _avoidWalls = true;
-    private _force_scalar = 8;
-    private _repulse_distance = 150;
+    private _force_scalar = 3;
+    private _repulse_distance = 350;
     private _steer_numerator = 0.5;
 
     constructor () {
