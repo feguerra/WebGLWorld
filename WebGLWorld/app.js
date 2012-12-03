@@ -255,7 +255,7 @@ var Bird = (function () {
 })();
 var Boids = (function () {
     function Boids() {
-        this._num_birds = 5;
+        this._num_birds = 2;
         this.boids = [];
         for(var i = 0; i < this._num_birds; i++) {
             var boid = this.boids[i] = new Bird();
@@ -285,6 +285,8 @@ var Boids = (function () {
             }
             this.boids[i].loadModel(model_path, scene, function () {
                 count++;
+                var bar_width = count / _this._num_birds * 100;
+                $("#models_bar").attr("style", "width: " + bar_width + "%;");
             });
         }
         var lazy_wait = function () {
@@ -294,7 +296,7 @@ var Boids = (function () {
                 callback();
             }
         };
-        lazy_wait();
+        callback();
     };
     Boids.prototype.getModel = function () {
         throw new DOMException();
@@ -322,30 +324,34 @@ var World = (function () {
         this.canvasWidth = window.innerWidth;
         this.canvasHeight = 480;
         this.clock = new THREE.Clock();
+        $("#reset_button").click(function () {
+            _this.resetCamera();
+        });
         this.camera = new THREE.PerspectiveCamera(75, this.canvasWidth / this.canvasHeight, 1, 10000);
-        this.camera.rotation.set(-0.8, 0.1, 0.1);
-        this.camera.position.set(2, 6.7, 5.6);
+        this.camera_pos_init = new THREE.Vector3(0, 20, 20);
+        this.camera_rot_init = new THREE.Vector3(0, 0, 0);
         this.renderer = new THREE.WebGLRenderer();
         this.renderer.setSize(this.canvasWidth, this.canvasHeight);
         $('#canvas-wrapper').append($(this.renderer.domElement));
         this.scene = new THREE.Scene();
         var loader = new THREE.SceneLoader();
         loader.load("models/sandLandscapeCube/SandLandscape.js", function (loaded) {
+            loader.callbackProgress = function (progress, result) {
+                var total = progress.totalModels + progress.totalTextures;
+                var loaded = progress.loadedModels + progress.loadedTextures;
+                $("#scene_bar").attr("style", "width: " + loaded / total * 100 + "%;");
+            };
             _this.camera = loaded.currentCamera;
+            _this.resetCamera();
             _this.camera.updateProjectionMatrix();
             _this.scene = loaded.scene;
             _this.renderer.setClearColor(loaded.bgColor, loaded.bgAlpha);
-            var light = new THREE.DirectionalLight(1118481, 100);
-            light.position.x = 20;
-            light.position.y = 20;
+            var light = new THREE.DirectionalLight(16777215, 2);
+            light.position.set(-40, -20, 10);
             _this.scene.add(light);
             var asdf = new THREE.AmbientLight(4473924);
             _this.scene.add(asdf);
-            _this.controls = new THREE.FirstPersonControls(_this.camera);
-            _this.controls.movementSpeed = 60;
-            _this.controls.lookSpeed = 0.02;
-            _this.controls.noFly = true;
-            _this.controls.lookVertical = true;
+            _this.controls = new THREE.OrbitControls(_this.camera);
             _this.boids = new Boids();
             _this.boids.loadModel(_this.scene, function () {
                 _this.animate();
@@ -363,6 +369,15 @@ var World = (function () {
         this.controls.update(delta);
         this.boids.update(delta);
         this.renderer.render(this.scene, this.camera);
+    };
+    World.prototype.resetCamera = function () {
+        this.camera.position.set(this.camera_pos_init.x, this.camera_pos_init.y, this.camera_pos_init.z);
+        this.camera.rotation.set(this.camera_rot_init.x, this.camera_rot_init.y, this.camera_rot_init.z);
+    };
+    World.prototype.OrbitCameraControls = function () {
+        this.controls = new THREE.OrbitControls(this.camera);
+    };
+    World.prototype.FirspersonCameraControls = function () {
     };
     return World;
 })();

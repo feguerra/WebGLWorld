@@ -135,6 +135,7 @@ interface ThreeModule {
 	PathControls(...params: any[]): any;
 	RollControls(...params: any[]): any;
 	TrackballControls(...params: any[]): any;
+    OrbitControls(...params: any[]): any;
 
 	//Extras / Core
 

@@ -45,7 +45,7 @@ class Bird implements IModel {
 					meshAnim.position.set( bird.position.x, bird.position.y, bird.position.z );
 					bird.model = meshAnim;
 					scene.add( bird.model );
-					callback();
+                    callback();
                 } );
     }
 
