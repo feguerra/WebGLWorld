@@ -31,7 +31,7 @@ class World {
         this.scene = new THREE.Scene();
         var loader = new THREE.SceneLoader();
 
-		loader.load( "models/js2/SandLandscape.js", ( loaded ) => {
+		loader.load( "models/sandLandscapeCube/SandLandscape.js", ( loaded ) => {
             this.camera = loaded.currentCamera;
 			this.camera.updateProjectionMatrix();
             this.scene = loaded.scene;
@@ -42,6 +42,8 @@ class World {
 		    light.position.x = 20;
 		    light.position.y = 20;
 		    this.scene.add(light);
+		    var asdf = new THREE.AmbientLight(0x444444);
+		    this.scene.add(asdf);
             //------------------------------- end lights -------------------------------
         
             //------------------------------- controles -------------------------------

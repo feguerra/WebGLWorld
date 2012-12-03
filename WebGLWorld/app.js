@@ -28,7 +28,7 @@ var Bird = (function () {
         this._height = 2000;
         this._depth = 2000;
         this._neighborhoodRadius = 100000;
-        this._maxSpeed = 2;
+        this._maxSpeed = 0.5;
         this._maxSteerForce = 0.2;
         this._avoidWalls = true;
         this._force_scalar = 3;
@@ -238,7 +238,6 @@ var Bird = (function () {
     Bird.prototype.update = function (delta) {
         this.model.updateAnimation(1000 * delta);
         this.model.position.set(this.position.x, this.position.y, this.position.z);
-        this.model.rotation.y = Math.PI / 2 - Math.atan2(-this.velocity.z, this.velocity.x);
         this.model.rotation.z = 3 * Math.PI / 2 - Math.asin(this.velocity.y / this.velocity.length());
     };
     Bird.prototype.setGoal = function (target) {
@@ -331,7 +330,7 @@ var World = (function () {
         $('#canvas-wrapper').append($(this.renderer.domElement));
         this.scene = new THREE.Scene();
         var loader = new THREE.SceneLoader();
-        loader.load("models/js2/SandLandscape.js", function (loaded) {
+        loader.load("models/sandLandscapeCube/SandLandscape.js", function (loaded) {
             _this.camera = loaded.currentCamera;
             _this.camera.updateProjectionMatrix();
             _this.scene = loaded.scene;
@@ -340,6 +339,8 @@ var World = (function () {
             light.position.x = 20;
             light.position.y = 20;
             _this.scene.add(light);
+            var asdf = new THREE.AmbientLight(4473924);
+            _this.scene.add(asdf);
             _this.controls = new THREE.FirstPersonControls(_this.camera);
             _this.controls.movementSpeed = 60;
             _this.controls.lookSpeed = 0.02;
