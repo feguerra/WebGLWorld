@@ -28,7 +28,7 @@ var Bird = (function () {
         this._height = 2000;
         this._depth = 2000;
         this._neighborhoodRadius = 100000;
-        this._maxSpeed = 2;
+        this._maxSpeed = 0.5;
         this._maxSteerForce = 0.2;
         this._avoidWalls = true;
         this._force_scalar = 3;
@@ -238,7 +238,6 @@ var Bird = (function () {
     Bird.prototype.update = function (delta) {
         this.model.updateAnimation(1000 * delta);
         this.model.position.set(this.position.x, this.position.y, this.position.z);
-        this.model.rotation.y = Math.PI / 2 - Math.atan2(-this.velocity.z, this.velocity.x);
         this.model.rotation.z = 3 * Math.PI / 2 - Math.asin(this.velocity.y / this.velocity.length());
     };
     Bird.prototype.setGoal = function (target) {
@@ -256,7 +255,7 @@ var Bird = (function () {
 })();
 var Boids = (function () {
     function Boids() {
-        this._num_birds = 2;
+        this._num_birds = 5;
         this.boids = [];
         for(var i = 0; i < this._num_birds; i++) {
             var boid = this.boids[i] = new Bird();
@@ -339,12 +338,12 @@ var World = (function () {
         $('#canvas-wrapper').append($(this.renderer.domElement));
         this.scene = new THREE.Scene();
         var loader = new THREE.SceneLoader();
-        loader.callbackProgress = function (progress, result) {
-            var total = progress.totalModels + progress.totalTextures;
-            var loaded = progress.loadedModels + progress.loadedTextures;
-            $("#scene_bar").attr("style", "width: " + loaded / total * 100 + "%;");
-        };
         loader.load("models/js2/SandLandscape.js", function (loaded) {
+            loader.onLoadProgress = function (progress, result) {
+                var total = progress.totalModels + progress.totalTextures;
+                var loaded = progress.loadedModels + progress.loadedTextures;
+                $("#scene_bar").attr("style", "width: " + loaded / total * 100 + "%;");
+            };
             _this.camera = loaded.currentCamera;
             _this.camera.updateProjectionMatrix();
             _this.scene = loaded.scene;

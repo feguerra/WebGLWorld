@@ -37,12 +37,13 @@ class World {
         $('#canvas-wrapper').append($(this.renderer.domElement));
         this.scene = new THREE.Scene();
         var loader = new THREE.SceneLoader();
-        loader.callbackProgress = function (progress, result) {
+
+		loader.load( "models/js2/SandLandscape.js", ( loaded ) => {
+        loader.onLoadProgress = function (progress, result) {
             var total = progress.totalModels + progress.totalTextures;
 			var loaded = progress.loadedModels + progress.loadedTextures;
             $("#scene_bar").attr("style", "width: "+loaded/total*100+"%;");
         }
-		loader.load( "models/js2/SandLandscape.js", ( loaded ) => {
             this.camera = loaded.currentCamera;
             //this.resetCamera();
 			this.camera.updateProjectionMatrix();
@@ -53,7 +54,7 @@ class World {
 		    var light = new THREE.DirectionalLight(0xffffff, 2);
 		    light.position.set(-40,-20,10);
 		    this.scene.add(light);
-            //------------------------------- end lights -------------------------------
+		    //------------------------------- end lights -------------------------------
         
             //------------------------------- controles -------------------------------
             this.controls = new THREE.OrbitControls(this.camera);
