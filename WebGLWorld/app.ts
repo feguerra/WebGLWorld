@@ -25,6 +25,7 @@ class World {
     constructor() {
 
         $("#reset_button").click(() =>{ this.resetCamera(); });
+        $("#switch_camera_button").click(() =>{ this.SwitchCameraControls(); });
             
         this.camera = new THREE.PerspectiveCamera(75, this.canvasWidth/this.canvasHeight, 1, 10000);
         this.camera_pos_init = new THREE.Vector3(0,20,20)
@@ -35,13 +36,12 @@ class World {
         $('#canvas-wrapper').append($(this.renderer.domElement));
         this.scene = new THREE.Scene();
         var loader = new THREE.SceneLoader();
-
-		loader.load( "models/sandLandscapeCeiling/SandLandscape.js", ( loaded ) => {
         loader.callbackProgress = function (progress, result) {
             var total = progress.totalModels + progress.totalTextures;
 			var loaded = progress.loadedModels + progress.loadedTextures;
             $("#scene_bar").attr("style", "width: "+loaded/total*100+"%;");
         }
+        loader.load( "models/sandLandscapeCeiling/SandLandscape.js", ( loaded ) => {
             this.camera = loaded.currentCamera;
             this.resetCamera();
 			this.camera.updateProjectionMatrix();
@@ -52,9 +52,7 @@ class World {
 		    var light = new THREE.DirectionalLight(0xffffff, 2);
 		    light.position.set(-40,-20,10);
 		    this.scene.add(light);
-		    var asdf = new THREE.AmbientLight(0x444444);
-		    this.scene.add(asdf);
-            //------------------------------- end lights -------------------------------
+		    //------------------------------- end lights -------------------------------
         
             //------------------------------- controles -------------------------------
             this.controls = new THREE.OrbitControls(this.camera);
@@ -87,15 +85,16 @@ class World {
         this.camera.rotation.set(this.camera_rot_init.x,this.camera_rot_init.y,this.camera_rot_init.z);
     }
 
-    OrbitCameraControls() {
-        this.controls = new THREE.OrbitControls(this.camera);
-    }
-
-    FirspersonCameraControls() {
-    //this.controls = new THREE.FirstPersonControls( this.camera );
-		    //this.controls.movementSpeed = 30;
-		    //this.controls.lookSpeed = 0.005;
-		    //this.controls.noFly = true;
-		    //this.controls.lookVertical = true;
+    SwitchCameraControls() {
+        if (this.controls instanceof THREE.FirstPersonControls) {
+            this.controls = new THREE.OrbitControls(this.camera);
+        }
+        else if (this.controls instanceof THREE.OrbitControls) {
+            this.controls = new THREE.FirstPersonControls( this.camera );
+		    this.controls.movementSpeed = 15;
+		    this.controls.lookSpeed = 0.02;
+		    this.controls.noFly = true;
+		    this.controls.lookVertical = true;
+        }
     }
 }
