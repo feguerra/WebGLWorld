@@ -325,11 +325,14 @@ var World = (function () {
         this.canvasWidth = window.innerWidth;
         this.canvasHeight = 480;
         this.clock = new THREE.Clock();
-        $("#reset_button").click(function () {
-            _this.resetCamera();
+        $("#orbit_camera_button").click(function () {
+            _this.OrbitCameraControls();
+        });
+        $("#firstPerson_camera_button").click(function () {
+            _this.FirspersonCameraControls();
         });
         this.camera = new THREE.PerspectiveCamera(75, this.canvasWidth / this.canvasHeight, 1, 10000);
-        this.camera_pos_init = new THREE.Vector3(0, 20, 20);
+        this.camera_pos_init = new THREE.Vector3(0, 0, 0);
         this.camera_rot_init = new THREE.Vector3(0, 0, 0);
         this.renderer = new THREE.WebGLRenderer();
         this.renderer.setSize(this.canvasWidth, this.canvasHeight);
@@ -343,7 +346,6 @@ var World = (function () {
         };
         loader.load("models/js2/SandLandscape.js", function (loaded) {
             _this.camera = loaded.currentCamera;
-            _this.resetCamera();
             _this.camera.updateProjectionMatrix();
             _this.scene = loaded.scene;
             _this.renderer.setClearColor(loaded.bgColor, loaded.bgAlpha);
@@ -372,6 +374,17 @@ var World = (function () {
     World.prototype.resetCamera = function () {
         this.camera.position.set(this.camera_pos_init.x, this.camera_pos_init.y, this.camera_pos_init.z);
         this.camera.rotation.set(this.camera_rot_init.x, this.camera_rot_init.y, this.camera_rot_init.z);
+    };
+    World.prototype.OrbitCameraControls = function () {
+        this.controls = new THREE.OrbitControls(this.camera);
+    };
+    World.prototype.FirspersonCameraControls = function () {
+        this.resetCamera();
+        this.controls = new THREE.FirstPersonControls(this.camera);
+        this.controls.movementSpeed = 30;
+        this.controls.lookSpeed = 0.01;
+        this.controls.noFly = true;
+        this.controls.lookVertical = true;
     };
     return World;
 })();
