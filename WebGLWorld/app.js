@@ -335,7 +335,7 @@ var World = (function () {
         $('#canvas-wrapper').append($(this.renderer.domElement));
         this.scene = new THREE.Scene();
         var loader = new THREE.SceneLoader();
-        loader.load("models/js2/SandLandscape.js", function (loaded) {
+        loader.load("models/sandLandscapeCeiling/SandLandscape.js", function (loaded) {
             loader.callbackProgress = function (progress, result) {
                 var total = progress.totalModels + progress.totalTextures;
                 var loaded = progress.loadedModels + progress.loadedTextures;
