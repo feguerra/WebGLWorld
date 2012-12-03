@@ -14,7 +14,7 @@ class Bird implements IModel {
     private _depth = 2000;
     private _goal;
     private _neighborhoodRadius = 100000;
-    private _maxSpeed = 2;
+    private _maxSpeed = 0.5;
     private _maxSteerForce = 0.2;
     private _avoidWalls = true;
     private _force_scalar = 3;
@@ -255,7 +255,7 @@ class Bird implements IModel {
     update(delta) {
         this.model.updateAnimation(1000 * delta);
         this.model.position.set(this.position.x, this.position.y, this.position.z);
-        this.model.rotation.y = Math.PI/2 - Math.atan2(-this.velocity.z, this.velocity.x);
+        //this.model.rotation.y = Math.PI/2 - Math.atan2(-this.velocity.z, this.velocity.x);
         this.model.rotation.z = 3*Math.PI/2 - Math.asin(this.velocity.y / this.velocity.length());
     }
 
