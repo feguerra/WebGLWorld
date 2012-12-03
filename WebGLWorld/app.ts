@@ -13,7 +13,9 @@ class World {
     private canvasWidth = window.innerWidth;
     private canvasHeight = 480;
     private scene; 
-    private camera;
+    private camera; 
+    private camera_pos_init;
+    private camera_rot_init;
     private mesh;
     private renderer;
     private controls;
@@ -21,35 +23,38 @@ class World {
     private boids : Boids;
 
     constructor() {
-        this.camera = new THREE.PerspectiveCamera(75, this.canvasWidth/this.canvasHeight, 1, 10000);
-        this.camera.rotation.set(-0.8,0.1,0.1); 
-        this.camera.position.set(2,6.7,5.6);
 
+        $("#reset_button").click(() =>{ this.resetCamera(); });
+            
+        this.camera = new THREE.PerspectiveCamera(75, this.canvasWidth/this.canvasHeight, 1, 10000);
+        this.camera_pos_init = new THREE.Vector3(0,20,20)
+        this.camera_rot_init = new THREE.Vector3(0,0,0)
+        
         this.renderer = new THREE.WebGLRenderer();
         this.renderer.setSize(this.canvasWidth, this.canvasHeight);
         $('#canvas-wrapper').append($(this.renderer.domElement));
         this.scene = new THREE.Scene();
         var loader = new THREE.SceneLoader();
-
+        loader.callbackProgress = function (progress, result) {
+            var total = progress.totalModels + progress.totalTextures;
+			var loaded = progress.loadedModels + progress.loadedTextures;
+            $("#scene_bar").attr("style", "width: "+loaded/total*100+"%;");
+        }
 		loader.load( "models/js2/SandLandscape.js", ( loaded ) => {
             this.camera = loaded.currentCamera;
+            this.resetCamera();
 			this.camera.updateProjectionMatrix();
             this.scene = loaded.scene;
             this.renderer.setClearColor( loaded.bgColor, loaded.bgAlpha );
 
             //------------------------------- lights -------------------------------
-		    var light = new THREE.DirectionalLight(0x111111, 100);
-		    light.position.x = 20;
-		    light.position.y = 20;
+		    var light = new THREE.DirectionalLight(0xffffff, 2);
+		    light.position.set(-40,-20,10);
 		    this.scene.add(light);
             //------------------------------- end lights -------------------------------
         
             //------------------------------- controles -------------------------------
-            this.controls = new THREE.FirstPersonControls( this.camera );
-		    this.controls.movementSpeed = 60;
-		    this.controls.lookSpeed = 0.02;
-		    this.controls.noFly = true;
-		    this.controls.lookVertical = true;
+            this.controls = new THREE.OrbitControls(this.camera);
             //------------------------------- end controles -------------------------------
 
             //------------------------------- BOIDS -------------------------------
@@ -72,5 +77,22 @@ class World {
 		this.boids.update(delta);
 
         this.renderer.render(this.scene, this.camera);        
+    }
+
+    resetCamera() {
+        this.camera.position.set(this.camera_pos_init.x,this.camera_pos_init.y,this.camera_pos_init.z);
+        this.camera.rotation.set(this.camera_rot_init.x,this.camera_rot_init.y,this.camera_rot_init.z);
+    }
+
+    OrbitCameraControls() {
+        this.controls = new THREE.OrbitControls(this.camera);
+    }
+
+    FirspersonCameraControls() {
+    //this.controls = new THREE.FirstPersonControls( this.camera );
+		    //this.controls.movementSpeed = 30;
+		    //this.controls.lookSpeed = 0.005;
+		    //this.controls.noFly = true;
+		    //this.controls.lookVertical = true;
     }
 }

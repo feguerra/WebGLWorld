@@ -43,9 +43,6 @@
     <Content Include="js\Boids.ts" />
     <Content Include="js\IModel.ts" />
     <Content Include="models\butterfly\textures\butterflywings.png" />
-    <Content Include="models\flamingo.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="models\js2\Sand Ripples 05.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

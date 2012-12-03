@@ -4,7 +4,7 @@
 
 class Boids implements IModel {
     private boids : Bird[];
-    private _num_birds = 5;
+    private _num_birds =2;
 
     constructor () {
         this.boids = [];
@@ -36,18 +36,21 @@ class Boids implements IModel {
 
             this.boids[i].loadModel(model_path, scene, () => { 
                 count++; 
+                var bar_width = count / this._num_birds * 100;
+                $("#models_bar").attr("style", "width: "+bar_width+"%;");
             });
         }
-
         // funcion que espera a que todos los modelos carguen
         var lazy_wait = () => {
-            if (count < this._num_birds)
-                setTimeout(lazy_wait, 1000);
+            if (count < this._num_birds) { 
+               setTimeout(lazy_wait, 1000);
+            }
             else
                 callback();
         }
 
-        lazy_wait();
+        //lazy_wait();
+        callback();
         /**/
     }
 
