@@ -36,7 +36,7 @@ class World {
         this.scene = new THREE.Scene();
         var loader = new THREE.SceneLoader();
 
-		loader.load( "models/sandLandscapeCube/SandLandscape.js", ( loaded ) => {
+		loader.load( "models/js2/SandLandscape.js", ( loaded ) => {
         loader.callbackProgress = function (progress, result) {
             var total = progress.totalModels + progress.totalTextures;
 			var loaded = progress.loadedModels + progress.loadedTextures;
