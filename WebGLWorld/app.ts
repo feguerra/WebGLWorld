@@ -24,10 +24,12 @@ class World {
 
     constructor() {
 
-        $("#reset_button").click(() =>{ this.resetCamera(); });
+        //$("#reset_button").click(() =>{ this.resetCamera(); });
+        $("#orbit_camera_button").click(() =>{ this.OrbitCameraControls(); });
+        $("#firstPerson_camera_button").click(() =>{ this.FirspersonCameraControls(); });
             
         this.camera = new THREE.PerspectiveCamera(75, this.canvasWidth/this.canvasHeight, 1, 10000);
-        this.camera_pos_init = new THREE.Vector3(0,20,20)
+        this.camera_pos_init = new THREE.Vector3(0,0,0)
         this.camera_rot_init = new THREE.Vector3(0,0,0)
         
         this.renderer = new THREE.WebGLRenderer();
@@ -42,7 +44,7 @@ class World {
         }
 		loader.load( "models/js2/SandLandscape.js", ( loaded ) => {
             this.camera = loaded.currentCamera;
-            this.resetCamera();
+            //this.resetCamera();
 			this.camera.updateProjectionMatrix();
             this.scene = loaded.scene;
             this.renderer.setClearColor( loaded.bgColor, loaded.bgAlpha );
@@ -89,10 +91,11 @@ class World {
     }
 
     FirspersonCameraControls() {
-    //this.controls = new THREE.FirstPersonControls( this.camera );
-		    //this.controls.movementSpeed = 30;
-		    //this.controls.lookSpeed = 0.005;
-		    //this.controls.noFly = true;
-		    //this.controls.lookVertical = true;
+        this.resetCamera();
+        this.controls = new THREE.FirstPersonControls( this.camera );
+		this.controls.movementSpeed = 30;
+		this.controls.lookSpeed = 0.01;
+		this.controls.noFly = true;
+		this.controls.lookVertical = true;
     }
 }
