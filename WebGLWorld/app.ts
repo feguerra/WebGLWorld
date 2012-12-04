@@ -14,22 +14,29 @@ class World {
     private canvasHeight = 480;
     private scene; 
     private camera; 
-    private camera_pos_init = new THREE.Vector3(0,10,10);
+    private camera_pos_init = new THREE.Vector3(4,12,20);
     private camera_rot_init = new THREE.Vector3(0,0,0);
-    private camera_max_x = 20;
-    private camera_max_y = 20;
-    private camera_max_z = 20;
+    private camera_max_x = 100;
+    private camera_min_x = -100;
+    private camera_max_y = 100;
+    private camera_min_y = -5;
+    private camera_max_z = 100;
+    private camera_min_z = -100;
     private mesh;
     private renderer;
     private controls;
     private clock = new THREE.Clock();
     private boids : Boids;
 
-    private pointLightModel;
+    private pointLightModel1;
+    private pointLightModel2;
+    private pointLightModel3;
+    private pointLightModel4;
     private light1;
     private light2;
     private light3;
     private light4;
+    private light5;
 
     constructor() {
 
@@ -57,33 +64,25 @@ class World {
             this.renderer.setClearColor( loaded.bgColor, loaded.bgAlpha );
 
             //------------------------------- lights -------------------------------
-		    this.light1 = new THREE.DirectionalLight(0xffffff, 1);
-		    this.light1.target = new THREE.Vector3(34, 12, 20);
-		    this.light1.position.set(-30,12,20);
+		    this.light1 = new THREE.PointLight(0xffffff);
+		    this.light1.position.set(-30,12,-15);
 		    this.scene.add(this.light1);
-            this.light2 = new THREE.DirectionalLight(0xffffff, 1);
-            this.light2.target = this.light1.position;
-		    this.light2.position.set(-34,12,20);
+            this.light2 = new THREE.PointLight(0xffffff);
+            this.light2.position.set(34,12,-15);
 		    this.scene.add(this.light2);
-            this.light3 = new THREE.DirectionalLight(0xffffff, 1);
-            this.light3.target = new THREE.Vector3(4, -22, 20);
-		    this.light3.position.set(4,45,20);
+            this.light3 = new THREE.PointLight(0xffffff);
+            this.light3.position.set(4,45,-15);
 		    this.scene.add(this.light3);
-            this.light4 = new THREE.DirectionalLight(0xffffff, 1);
-            this.light4.target = this.light3.position;
-		    this.light4.position.set(4,-22,20);
+            this.light4 = new THREE.PointLight(0xffffff);
+            this.light4.position.set(4,-22,-15);
 		    this.scene.add(this.light4);
-            var light5 = new THREE.SpotLight(0x111111,3);
-		    light5.position.set(12,12,80);
-		    //this.scene.add(light3);
+            this.light5 = new THREE.SpotLight(0xffffff,3);
+		    this.light5.position.set(90,20,80);
+		    this.scene.add(this.light5);
             
-            //Naxo says: dejé esta luz para que se viera completo, hay que sacarla para que Fabián ponga las suyas :P.
-            var ambient_light = new THREE.AmbientLight(0x333333);
-		    //this.scene.add(ambient_light);
-            // esfera para "ver" la luz puntual
-        this.pointLightModel = new THREE.Mesh( new THREE.SphereGeometry( 0.5 ), new THREE.MeshBasicMaterial( { color: 0xff0000 } ) );
-        this.pointLightModel.position = this.light4.position;
-		this.scene.add( this.pointLightModel );
+            this.pointLightModel1 = new THREE.Mesh( new THREE.SphereGeometry( 0.5 ), new THREE.MeshBasicMaterial( { color: 0xff0000 } ) );
+            this.pointLightModel1.position = this.light5.position;
+		    this.scene.add( this.pointLightModel1 );
             //------------------------------- end lights -------------------------------
         
             //------------------------------- controles -------------------------------
@@ -106,7 +105,7 @@ class World {
         var delta = this.clock.getDelta(),
 		time = this.clock.getElapsedTime() * 5;
 		this.controls.update( delta );
-        //this.checkBounds();
+        this.checkBounds();
 		this.boids.update(delta);
 
         this.renderer.render(this.scene, this.camera);        
@@ -135,17 +134,17 @@ class World {
         var camera_y = this.camera.position.y;
         var camera_z = this.camera.position.z;
 
-        if(camera_x<-this.camera_max_x)
-            this.camera.position.x = -this.camera_max_x;
-        else if(camera_x>this.camera_max_x)
+        if(camera_x < this.camera_min_x)
+            this.camera.position.x = this.camera_min_x;
+        else if(camera_x > this.camera_max_x)
             this.camera.position.x = this.camera_max_x;
-        if(camera_y<-this.camera_max_y)
-            this.camera.position.y = -this.camera_max_y;
-        else if(camera_y>this.camera_max_y)
+        if(camera_y < this.camera_min_y)
+            this.camera.position.y = this.camera_min_y;
+        else if(camera_y > this.camera_max_y)
             this.camera.position.y = this.camera_max_y;
-            if(camera_z<-this.camera_max_z)
-            this.camera.position.z = -this.camera_max_z;
-        else if(camera_z>this.camera_max_z)
+            if(camera_z < this.camera_min_z)
+            this.camera.position.z = this.camera_min_z;
+        else if(camera_z > this.camera_max_z)
             this.camera.position.z = this.camera_max_z;
     }
 }
