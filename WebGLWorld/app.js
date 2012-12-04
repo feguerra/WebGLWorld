@@ -22,22 +22,36 @@ var Terreno = (function () {
 })();
 var Bird = (function () {
     function Bird() {
-        this._scale = 1;
-        this.vector = new THREE.Vector3();
         this._width = 2000;
         this._height = 2000;
         this._depth = 2000;
-        this._neighborhoodRadius = 100000;
-        this._maxSpeed = 0.5;
-        this._maxSteerForce = 0.2;
+        this.num_frames_pass = 0;
+        this.num_frames_skip = 3;
+        this._max_rotation = Math.PI / 16;
+        this._scale = 1;
+        this._max_speed = 0.8;
         this._avoidWalls = true;
-        this._force_scalar = 3;
-        this._repulse_distance = 350;
-        this._steer_numerator = 0.5;
+        this._reach_ponderation = 0.008;
+        this._separation_radio = 25;
+        this._pond_separation = 0.5;
+        this._pond_cohesion = 0.005;
+        this._pond_alignment = 0.6;
+        this.init_center_pos = new THREE.Vector3(100, 100, 100);
+        this.init_center_vel = new THREE.Vector3(0.2, 0.2, 0.2);
+        this.init_d_pos = 50;
+        this.init_d_vel = 0.1;
         this.position = new THREE.Vector3();
         this.velocity = new THREE.Vector3();
         this._acceleration = new THREE.Vector3();
     }
+    Bird.prototype.setRandPosAndVel = function () {
+        this.position.x = Math.random() * this.init_center_pos.x - this.init_d_pos;
+        this.position.y = Math.random() * this.init_center_pos.y - this.init_d_pos;
+        this.position.z = Math.random() * this.init_center_pos.z - this.init_d_pos;
+        this.velocity.x = Math.random() * this.init_center_vel.x - this.init_d_vel;
+        this.velocity.y = Math.random() * this.init_center_vel.y - this.init_d_vel;
+        this.velocity.z = Math.random() * this.init_center_vel.z - this.init_d_vel;
+    };
     Bird.prototype.loadModel = function (model_path, scene, callback) {
         var loader = new THREE.JSONLoader();
         var bird = this;
@@ -66,55 +80,38 @@ var Bird = (function () {
             }
         }
     };
-    Bird.prototype.run = function (boids) {
+    Bird.prototype.run = function (boids, ind) {
+        if(this.num_frames_pass != this.num_frames_skip - 1) {
+            return;
+        }
         if(this._avoidWalls) {
             this.checkBounds();
         }
-        this.vector.set(-this._width, this.position.y, this.position.z);
-        this.vector = this.avoid(this.vector);
-        this.vector.multiplyScalar(this._force_scalar);
-        this._acceleration.addSelf(this.vector);
-        this.vector.set(this._width, this.position.y, this.position.z);
-        this.vector = this.avoid(this.vector);
-        this.vector.multiplyScalar(this._force_scalar);
-        this._acceleration.addSelf(this.vector);
-        this.vector.set(this.position.x, -this._height, this.position.z);
-        this.vector = this.avoid(this.vector);
-        this.vector.multiplyScalar(this._force_scalar);
-        this._acceleration.addSelf(this.vector);
-        this.vector.set(this.position.x, this._height, this.position.z);
-        this.vector = this.avoid(this.vector);
-        this.vector.multiplyScalar(this._force_scalar);
-        this._acceleration.addSelf(this.vector);
-        this.vector.set(this.position.x, this.position.y, -this._depth);
-        this.vector = this.avoid(this.vector);
-        this.vector.multiplyScalar(this._force_scalar);
-        this._acceleration.addSelf(this.vector);
-        this.vector.set(this.position.x, this.position.y, this._depth);
-        this.vector = this.avoid(this.vector);
-        this.vector.multiplyScalar(this._force_scalar);
-        this._acceleration.addSelf(this.vector);
-        if(Math.random() > 0.5) {
-            this.flock(boids);
-        }
+        this.flock(boids, ind);
         this.move();
     };
-    Bird.prototype.flock = function (boids) {
+    Bird.prototype.flock = function (boids, ind) {
         if(this._goal) {
-            this._acceleration.addSelf(this.reach(this._goal, 0.005));
+            this._acceleration.addSelf(this.reach(this._goal, this._reach_ponderation));
         }
-        this._acceleration.addSelf(this.alignment(boids));
-        this._acceleration.addSelf(this.cohesion(boids));
-        this._acceleration.addSelf(this.separation(boids));
+        this._acceleration.addSelf(this.alignment(boids, ind));
+        this._acceleration.addSelf(this.cohesion(boids, ind));
+        this._acceleration.addSelf(this.separation(boids, ind));
     };
     Bird.prototype.move = function () {
         this.velocity.addSelf(this._acceleration);
         var l = this.velocity.length();
-        if(l > this._maxSpeed) {
-            this.velocity.divideScalar(l / this._maxSpeed);
+        if(l > this._max_speed) {
+            this.velocity.divideScalar(l / this._max_speed);
         }
         this.position.addSelf(this.velocity);
         this._acceleration.set(0, 0, 0);
+    };
+    Bird.prototype.reach = function (target, amount) {
+        var steer = new THREE.Vector3();
+        steer.sub(target, this.position);
+        steer.multiplyScalar(amount);
+        return steer;
     };
     Bird.prototype.checkBounds = function () {
         if(this.position.x > this._width) {
@@ -136,109 +133,73 @@ var Bird = (function () {
             this.position.z = this._depth;
         }
     };
-    Bird.prototype.avoid = function (target) {
-        var steer = new THREE.Vector3();
-        steer.copy(this.position);
-        steer.subSelf(target);
-        steer.multiplyScalar(1 / this.position.distanceToSquared(target));
-        return steer;
-    };
-    Bird.prototype.repulse = function (target) {
-        var distance = this.position.distanceTo(target);
-        if(distance < this._repulse_distance) {
-            var steer = new THREE.Vector3();
-            steer.sub(this.position, target);
-            steer.multiplyScalar(this._steer_numerator / distance);
-            this._acceleration.addSelf(steer);
-        }
-    };
-    Bird.prototype.reach = function (target, amount) {
-        var steer = new THREE.Vector3();
-        steer.sub(target, this.position);
-        steer.multiplyScalar(amount);
-        return steer;
-    };
-    Bird.prototype.alignment = function (boids) {
-        var boid;
+    Bird.prototype.alignment = function (boids, ind) {
+        var other;
         var velSum = new THREE.Vector3();
-        var count = 0;
 
-        for(var i = 0, il = boids.length; i < il; i++) {
-            if(Math.random() > 0.6) {
+        for(var i = 0; i < boids.length; i++) {
+            if(ind == i) {
                 continue;
             }
-            boid = boids[i];
-            var distance = boid.position.distanceTo(this.position);
-            if(distance > 0 && distance <= this._neighborhoodRadius) {
-                velSum.addSelf(boid.velocity);
-                count++;
-            }
+            other = boids[i];
+            velSum.addSelf(other.velocity);
         }
-        if(count > 0) {
-            velSum.divideScalar(count);
-            var l = velSum.length();
-            if(l > this._maxSteerForce) {
-                velSum.divideScalar(l / this._maxSteerForce);
-            }
-        }
-        return velSum;
+        velSum.divideScalar(boids.length - 1);
+        return velSum.multiplyScalar(this._pond_alignment);
     };
-    Bird.prototype.cohesion = function (boids) {
-        var boid;
+    Bird.prototype.cohesion = function (boids, ind) {
+        var other;
         var distance;
         var posSum = new THREE.Vector3();
         var steer = new THREE.Vector3();
-        var count = 0;
 
-        for(var i = 0, il = boids.length; i < il; i++) {
-            if(Math.random() > 0.6) {
+        for(var i = 0; i < boids.length; i++) {
+            if(ind == i) {
                 continue;
             }
-            boid = boids[i];
-            distance = boid.position.distanceTo(this.position);
-            if(distance > 0 && distance <= this._neighborhoodRadius) {
-                posSum.addSelf(boid.position);
-                count++;
-            }
+            other = boids[i];
+            distance = other.position.distanceTo(this.position);
+            posSum.addSelf(other.position);
         }
-        if(count > 0) {
-            posSum.divideScalar(count);
-        }
+        posSum.divideScalar(boids.length - 1);
         steer.sub(posSum, this.position);
-        var l = steer.length();
-        if(l > this._maxSteerForce) {
-            steer.divideScalar(l / this._maxSteerForce);
-        }
-        return steer;
+        return steer.multiplyScalar(this._pond_cohesion);
     };
-    Bird.prototype.separation = function (boids) {
-        var boid;
+    Bird.prototype.separation = function (boids, ind) {
+        var other;
         var distance;
         var posSum = new THREE.Vector3();
-        var repulse = new THREE.Vector3();
 
-        for(var i = 0, il = boids.length; i < il; i++) {
-            if(Math.random() > 0.6) {
+        for(var i = 0; i < boids.length; i++) {
+            if(ind == i) {
                 continue;
             }
-            boid = boids[i];
-            distance = boid.position.distanceTo(this.position);
-            if(distance > 0 && distance <= this._neighborhoodRadius) {
-                repulse.sub(this.position, boid.position);
-                repulse.normalize();
-                repulse.divideScalar(distance);
-                posSum.addSelf(repulse);
+            other = boids[i];
+            distance = other.position.distanceTo(this.position);
+            var repulse_vector = new THREE.Vector3();
+            repulse_vector.sub(this.position, other.position);
+            if(distance <= this._separation_radio) {
+                posSum.addSelf(repulse_vector);
             }
         }
-        return posSum;
-    };
-    Bird.prototype.getModel = function () {
-        return this.model;
+        return posSum.multiplyScalar(this._pond_separation);
     };
     Bird.prototype.update = function (delta) {
         this.model.updateAnimation(1000 * delta);
-        this.model.position.set(this.position.x, this.position.y, this.position.z);
-        this.model.rotation.z = 3 * Math.PI / 2 - Math.asin(this.velocity.y / this.velocity.length());
+        this.num_frames_pass++;
+        if(this.num_frames_pass == this.num_frames_skip) {
+            this.model.position.set(this.position.x, this.position.y, this.position.z);
+            var y_rotation = Math.PI / 2 - Math.atan2(-this.velocity.z, this.velocity.x);
+            if(this._max_rotation >= Math.abs(this.model.rotation.y - y_rotation)) {
+                this.model.rotation.y = y_rotation;
+            } else {
+                this.model.rotation.y = y_rotation % this._max_rotation;
+            }
+            this.num_frames_pass = 0;
+        }
+    };
+    Bird.prototype.getModel = function () {
+        return this.model;
     };
     Bird.prototype.setGoal = function (target) {
         this._goal = target;
@@ -259,15 +220,10 @@ var Boids = (function () {
         this.boids = [];
         for(var i = 0; i < this._num_birds; i++) {
             var boid = this.boids[i] = new Bird();
-            boid.position.x = Math.random() * 500 - 250;
-            boid.position.y = Math.random() * 500 - 250;
-            boid.position.z = Math.random() * 500 - 250;
-            boid.velocity.x = Math.random() * 1 - 0.5;
-            boid.velocity.y = Math.random() * 1 - 0.5;
-            boid.velocity.z = Math.random() * 1 - 0.5;
+            boid.setRandPosAndVel();
             boid.setAvoidWalls(true);
-            boid.setGoal(new THREE.Vector3());
-            boid.setWorldSize(1500, 1500, 1500);
+            boid.setGoal(new THREE.Vector3(4, 12, 20));
+            boid.setWorldSize(50, 50, 50);
         }
     }
     Boids.prototype.loadModel = function (scene, callback) {
@@ -305,9 +261,9 @@ var Boids = (function () {
         var il = this.boids.length;
         for(var i = 0; i < il; i++) {
             var boid = this.boids[i];
-            boid.run(this.boids);
             var bird = boid.getModel();
             if(bird != undefined) {
+                boid.run(this.boids, i);
                 boid.update(delta);
             }
         }
