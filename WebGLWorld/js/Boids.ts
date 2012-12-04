@@ -4,23 +4,21 @@
 
 class Boids implements IModel {
     private boids : Bird[];
-    private _num_birds =2;
+    private _num_birds = 6;
 
     constructor () {
         this.boids = [];
 
+
         for (var i = 0; i < this._num_birds; i++) {
 
             var boid = this.boids[i] = new Bird();
-            boid.position.x = Math.random() * 500 - 250;
-            boid.position.y = Math.random() * 500 - 250;
-            boid.position.z = Math.random() * 500 - 250;
-            boid.velocity.x = Math.random() * 1 - 0.5;
-            boid.velocity.y = Math.random() * 1 - 0.5;
-            boid.velocity.z = Math.random() * 1 - 0.5;
+            boid.setRandPosAndVel();
             boid.setAvoidWalls(true);
-            boid.setGoal(new THREE.Vector3());
-            boid.setWorldSize(1500 , 1500, 1500);
+            boid.setGoal(new THREE.Vector3(14,30,20));
+            //boid.scene_center = new THREE.Vector3(4, 15, 20);
+            boid.scene_center = new THREE.Vector3(35, 25, 20);
+            boid.setWorldSize(100 , 100, 50);
         }
     }
 
@@ -63,11 +61,11 @@ class Boids implements IModel {
         for (var i = 0; i < il; i++) {
 
             var boid = this.boids[i];
-            boid.run(this.boids);
 
             var bird = boid.getModel();
             
             if (bird != undefined) {
+                boid.run(this.boids,i);
                 boid.update(delta);
             }
         }
