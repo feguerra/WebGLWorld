@@ -255,7 +255,7 @@ var Bird = (function () {
 })();
 var Boids = (function () {
     function Boids() {
-        this._num_birds = 5;
+        this._num_birds = 2;
         this.boids = [];
         for(var i = 0; i < this._num_birds; i++) {
             var boid = this.boids[i] = new Bird();
@@ -323,16 +323,19 @@ var World = (function () {
         var _this = this;
         this.canvasWidth = window.innerWidth;
         this.canvasHeight = 480;
+        this.camera_pos_init = new THREE.Vector3(0, 10, 10);
+        this.camera_rot_init = new THREE.Vector3(0, 0, 0);
+        this.camera_max_x = 20;
+        this.camera_max_y = 20;
+        this.camera_max_z = 20;
         this.clock = new THREE.Clock();
         $("#reset_button").click(function () {
             _this.resetCamera();
         });
         $("#switch_camera_button").click(function () {
-            _this.SwitchCameraControls();
+            _this.switchCameraControls();
         });
         this.camera = new THREE.PerspectiveCamera(75, this.canvasWidth / this.canvasHeight, 1, 10000);
-        this.camera_pos_init = new THREE.Vector3(0, 20, 20);
-        this.camera_rot_init = new THREE.Vector3(0, 0, 0);
         this.renderer = new THREE.WebGLRenderer();
         this.renderer.setSize(this.canvasWidth, this.canvasHeight);
         $('#canvas-wrapper').append($(this.renderer.domElement));
@@ -349,9 +352,24 @@ var World = (function () {
             _this.camera.updateProjectionMatrix();
             _this.scene = loaded.scene;
             _this.renderer.setClearColor(loaded.bgColor, loaded.bgAlpha);
-            var light = new THREE.DirectionalLight(16777215, 2);
-            light.position.set(-40, -20, 10);
-            _this.scene.add(light);
+            var light1 = new THREE.SpotLight(16777215);
+            light1.position.set(2, 2, 5);
+            _this.scene.add(light1);
+            var light3 = new THREE.SpotLight(16777215);
+            light3.position.set(-2, -2, 5);
+            _this.scene.add(light3);
+            var light4 = new THREE.AmbientLight(7829367);
+            _this.scene.add(light4);
+            _this.pointLightModel = new THREE.Mesh(new THREE.SphereGeometry(0.5), new THREE.MeshBasicMaterial({
+                color: 16711680
+            }));
+            _this.pointLightModel.position = light1.position;
+            _this.scene.add(_this.pointLightModel);
+            _this.pointLightModel2 = new THREE.Mesh(new THREE.SphereGeometry(0.5), new THREE.MeshBasicMaterial({
+                color: 16711680
+            }));
+            _this.pointLightModel2.position = light3.position;
+            _this.scene.add(_this.pointLightModel2);
             _this.controls = new THREE.OrbitControls(_this.camera);
             _this.boids = new Boids();
             _this.boids.loadModel(_this.scene, function () {
@@ -368,6 +386,7 @@ var World = (function () {
         var time = this.clock.getElapsedTime() * 5;
 
         this.controls.update(delta);
+        this.checkBounds();
         this.boids.update(delta);
         this.renderer.render(this.scene, this.camera);
     };
@@ -375,7 +394,7 @@ var World = (function () {
         this.camera.position.set(this.camera_pos_init.x, this.camera_pos_init.y, this.camera_pos_init.z);
         this.camera.rotation.set(this.camera_rot_init.x, this.camera_rot_init.y, this.camera_rot_init.z);
     };
-    World.prototype.SwitchCameraControls = function () {
+    World.prototype.switchCameraControls = function () {
         if(this.controls instanceof THREE.FirstPersonControls) {
             this.controls = new THREE.OrbitControls(this.camera);
         } else {
@@ -385,6 +404,32 @@ var World = (function () {
                 this.controls.lookSpeed = 0.02;
                 this.controls.noFly = true;
                 this.controls.lookVertical = true;
+            }
+        }
+    };
+    World.prototype.checkBounds = function () {
+        var camera_x = this.camera.position.x;
+        var camera_y = this.camera.position.y;
+        var camera_z = this.camera.position.z;
+        if(camera_x < -this.camera_max_x) {
+            this.camera.position.x = -this.camera_max_x;
+        } else {
+            if(camera_x > this.camera_max_x) {
+                this.camera.position.x = this.camera_max_x;
+            }
+        }
+        if(camera_y < -this.camera_max_y) {
+            this.camera.position.y = -this.camera_max_y;
+        } else {
+            if(camera_y > this.camera_max_y) {
+                this.camera.position.y = this.camera_max_y;
+            }
+        }
+        if(camera_z < -this.camera_max_z) {
+            this.camera.position.z = -this.camera_max_z;
+        } else {
+            if(camera_z > this.camera_max_z) {
+                this.camera.position.z = this.camera_max_z;
             }
         }
     };
