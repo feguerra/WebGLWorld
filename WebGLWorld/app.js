@@ -22,20 +22,24 @@ var Terreno = (function () {
 })();
 var Bird = (function () {
     function Bird() {
-        this._width = 2000;
-        this._height = 2000;
-        this._depth = 2000;
+        this._width_max = 0;
+        this._height_max = 0;
+        this._depth_max = 0;
+        this._width_min = 0;
+        this._height_min = 0;
+        this._depth_min = 0;
         this.num_frames_pass = 0;
         this.num_frames_skip = 3;
         this._max_rotation = Math.PI / 16;
-        this._scale = 1;
-        this._max_speed = 0.8;
+        this._scale = 0.8;
+        this._max_speed = 0.6;
         this._avoidWalls = true;
-        this._reach_ponderation = 0.008;
-        this._separation_radio = 25;
+        this._reach_ponderation = 0.1;
+        this._separation_radio = 5;
         this._pond_separation = 0.5;
         this._pond_cohesion = 0.005;
-        this._pond_alignment = 0.6;
+        this._pond_alignment = 0.06;
+        this.scene_center = new THREE.Vector3(4, 12, 20);
         this.init_center_pos = new THREE.Vector3(100, 100, 100);
         this.init_center_vel = new THREE.Vector3(0.2, 0.2, 0.2);
         this.init_d_pos = 50;
@@ -90,9 +94,19 @@ var Bird = (function () {
         this.flock(boids, ind);
         this.move();
     };
+    Bird.prototype.change_goal = function () {
+        var x_val = Math.random() * this._width_max + this._width_min;
+        var y_val = Math.random() * this._height_max + this._height_min;
+        ; ;
+        var z_val = Math.random() * this._depth_max + this._depth_min;
+        this._goal = new THREE.Vector3(x_val, y_val, z_val);
+    };
     Bird.prototype.flock = function (boids, ind) {
         if(this._goal) {
             this._acceleration.addSelf(this.reach(this._goal, this._reach_ponderation));
+            if(Math.random() > 0.7) {
+                this.change_goal();
+            }
         }
         this._acceleration.addSelf(this.alignment(boids, ind));
         this._acceleration.addSelf(this.cohesion(boids, ind));
@@ -114,23 +128,23 @@ var Bird = (function () {
         return steer;
     };
     Bird.prototype.checkBounds = function () {
-        if(this.position.x > this._width) {
-            this.position.x = -this._width;
+        if(this.position.x > this._width_max) {
+            this.position.x = this._width_max;
         }
-        if(this.position.x < -this._width) {
-            this.position.x = this._width;
+        if(this.position.x < this._width_min) {
+            this.position.x = this._width_min;
         }
-        if(this.position.y > this._height) {
-            this.position.y = -this._height;
+        if(this.position.y > this._height_max) {
+            this.position.y = this._height_max;
         }
-        if(this.position.y < -this._height) {
-            this.position.y = this._height;
+        if(this.position.y < this._height_min) {
+            this.position.y = this._height_min;
         }
-        if(this.position.z > this._depth) {
-            this.position.z = -this._depth;
+        if(this.position.z > this._depth_max) {
+            this.position.z = this._depth_max;
         }
-        if(this.position.z < -this._depth) {
-            this.position.z = this._depth;
+        if(this.position.z < this._depth_min) {
+            this.position.z = this._depth_min;
         }
     };
     Bird.prototype.alignment = function (boids, ind) {
@@ -208,22 +222,27 @@ var Bird = (function () {
         this._avoidWalls = value;
     };
     Bird.prototype.setWorldSize = function (width, height, depth) {
-        this._width = width;
-        this._height = height;
-        this._depth = depth;
+        this._width_max = width / 2 + this.scene_center.x;
+        this._height_max = height / 2 + this.scene_center.y;
+        this._depth_max = depth / 2 + this.scene_center.z;
+        this._width_min = -width / 2 + this.scene_center.x;
+        this._height_min = -height / 2 + this.scene_center.y;
+        ; ;
+        this._depth_min = -depth / 2 + this.scene_center.z;
     };
     return Bird;
 })();
 var Boids = (function () {
     function Boids() {
-        this._num_birds = 5;
+        this._num_birds = 6;
         this.boids = [];
         for(var i = 0; i < this._num_birds; i++) {
             var boid = this.boids[i] = new Bird();
             boid.setRandPosAndVel();
             boid.setAvoidWalls(true);
-            boid.setGoal(new THREE.Vector3(4, 12, 20));
-            boid.setWorldSize(50, 50, 50);
+            boid.setGoal(new THREE.Vector3(14, 30, 20));
+            boid.scene_center = new THREE.Vector3(35, 25, 20);
+            boid.setWorldSize(100, 100, 50);
         }
     }
     Boids.prototype.loadModel = function (scene, callback) {

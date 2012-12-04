@@ -4,18 +4,21 @@
 
 class Boids implements IModel {
     private boids : Bird[];
-    private _num_birds = 5;
+    private _num_birds = 6;
 
     constructor () {
         this.boids = [];
+
 
         for (var i = 0; i < this._num_birds; i++) {
 
             var boid = this.boids[i] = new Bird();
             boid.setRandPosAndVel();
             boid.setAvoidWalls(true);
-            boid.setGoal(new THREE.Vector3(4,12,20));
-            boid.setWorldSize(50 , 50, 50);
+            boid.setGoal(new THREE.Vector3(14,30,20));
+            //boid.scene_center = new THREE.Vector3(4, 15, 20);
+            boid.scene_center = new THREE.Vector3(35, 25, 20);
+            boid.setWorldSize(100 , 100, 50);
         }
     }
 
