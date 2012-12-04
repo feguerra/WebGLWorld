@@ -346,30 +346,37 @@ var World = (function () {
             var loaded = progress.loadedModels + progress.loadedTextures;
             $("#scene_bar").attr("style", "width: " + loaded / total * 100 + "%;");
         };
-        loader.load("models/sandLandscapeCeiling/SandLandscape.js", function (loaded) {
+        loader.load("models/sandLandscapeCeilingBig/SandLandscape_big.js", function (loaded) {
             _this.camera = loaded.currentCamera;
             _this.resetCamera();
             _this.camera.updateProjectionMatrix();
             _this.scene = loaded.scene;
+            _this.scene.fog = new THREE.Fog(0, 1);
             _this.renderer.setClearColor(loaded.bgColor, loaded.bgAlpha);
-            var light1 = new THREE.SpotLight(16777215);
-            light1.position.set(2, 2, 5);
-            _this.scene.add(light1);
-            var light3 = new THREE.SpotLight(16777215);
-            light3.position.set(-2, -2, 5);
-            _this.scene.add(light3);
-            var light4 = new THREE.AmbientLight(7829367);
-            _this.scene.add(light4);
+            _this.light1 = new THREE.DirectionalLight(16777215, 1);
+            _this.light1.target = new THREE.Vector3(34, 12, 20);
+            _this.light1.position.set(-30, 12, 20);
+            _this.scene.add(_this.light1);
+            _this.light2 = new THREE.DirectionalLight(16777215, 1);
+            _this.light2.target = _this.light1.position;
+            _this.light2.position.set(-34, 12, 20);
+            _this.scene.add(_this.light2);
+            _this.light3 = new THREE.DirectionalLight(16777215, 1);
+            _this.light3.target = new THREE.Vector3(4, -22, 20);
+            _this.light3.position.set(4, 45, 20);
+            _this.scene.add(_this.light3);
+            _this.light4 = new THREE.DirectionalLight(16777215, 1);
+            _this.light4.target = _this.light3.position;
+            _this.light4.position.set(4, -22, 20);
+            _this.scene.add(_this.light4);
+            var light5 = new THREE.SpotLight(1118481, 3);
+            light5.position.set(12, 12, 80);
+            var ambient_light = new THREE.AmbientLight(3355443);
             _this.pointLightModel = new THREE.Mesh(new THREE.SphereGeometry(0.5), new THREE.MeshBasicMaterial({
                 color: 16711680
             }));
-            _this.pointLightModel.position = light1.position;
+            _this.pointLightModel.position = _this.light4.position;
             _this.scene.add(_this.pointLightModel);
-            _this.pointLightModel2 = new THREE.Mesh(new THREE.SphereGeometry(0.5), new THREE.MeshBasicMaterial({
-                color: 16711680
-            }));
-            _this.pointLightModel2.position = light3.position;
-            _this.scene.add(_this.pointLightModel2);
             _this.controls = new THREE.OrbitControls(_this.camera);
             _this.boids = new Boids();
             _this.boids.loadModel(_this.scene, function () {
@@ -386,7 +393,6 @@ var World = (function () {
         var time = this.clock.getElapsedTime() * 5;
 
         this.controls.update(delta);
-        this.checkBounds();
         this.boids.update(delta);
         this.renderer.render(this.scene, this.camera);
     };

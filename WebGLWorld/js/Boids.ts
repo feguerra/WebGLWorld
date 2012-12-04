@@ -4,7 +4,7 @@
 
 class Boids implements IModel {
     private boids : Bird[];
-    private _num_birds =5;
+    private _num_birds =2;
 
     constructor () {
         this.boids = [];

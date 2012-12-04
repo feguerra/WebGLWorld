@@ -26,7 +26,10 @@ class World {
     private boids : Boids;
 
     private pointLightModel;
-    private pointLightModel2;
+    private light1;
+    private light2;
+    private light3;
+    private light4;
 
     constructor() {
 
@@ -45,46 +48,43 @@ class World {
 			var loaded = progress.loadedModels + progress.loadedTextures;
             $("#scene_bar").attr("style", "width: "+loaded/total*100+"%;");
         }
-        loader.load( "models/sandLandscapeCeiling/SandLandscape.js", ( loaded ) => {
+		loader.load( "models/sandLandscapeCeilingBig/SandLandscape_big.js", ( loaded ) => {
             this.camera = loaded.currentCamera;
             this.resetCamera();
 			this.camera.updateProjectionMatrix();
             this.scene = loaded.scene;
+            this.scene.fog = new THREE.Fog(0x000000, 1)
             this.renderer.setClearColor( loaded.bgColor, loaded.bgAlpha );
 
             //------------------------------- lights -------------------------------
-		    var light1 = new THREE.SpotLight(0xffffff);
-		    light1.position.set(2,2,5);
-		    this.scene.add(light1);
-            var light3 = new THREE.SpotLight(0xffffff);
-		    light3.position.set(-2,-2,5);
-		    this.scene.add(light3);
-            var light4 = new THREE.AmbientLight(0x777777);
-		    this.scene.add(light4);
-            /*
-            var light2 = new THREE.DirectionalLight(0xffffff, 2);
-		    light2.position.set(3,-3,5);
-		    this.scene.add(light2);
-            var light3 = new THREE.DirectionalLight(0xffffff, 2);
-		    light3.position.set(-3,3,5);
-		    this.scene.add(light3);
-            var light4 = new THREE.DirectionalLight(0xffffff, 2);
-		    light4.position.set(-3,-3,5);
-		    this.scene.add(light4);
-            //var light5 = new THREE.DirectionalLight(0xffffff, 2);
-		    //light5.position.set(0,0,5);
-		    //this.scene.add(light5);
-            */
-
-            //var ambient_light = new THREE.AmbientLight(0x222222);
+		    this.light1 = new THREE.DirectionalLight(0xffffff, 1);
+		    this.light1.target = new THREE.Vector3(34, 12, 20);
+		    this.light1.position.set(-30,12,20);
+		    this.scene.add(this.light1);
+            this.light2 = new THREE.DirectionalLight(0xffffff, 1);
+            this.light2.target = this.light1.position;
+		    this.light2.position.set(-34,12,20);
+		    this.scene.add(this.light2);
+            this.light3 = new THREE.DirectionalLight(0xffffff, 1);
+            this.light3.target = new THREE.Vector3(4, -22, 20);
+		    this.light3.position.set(4,45,20);
+		    this.scene.add(this.light3);
+            this.light4 = new THREE.DirectionalLight(0xffffff, 1);
+            this.light4.target = this.light3.position;
+		    this.light4.position.set(4,-22,20);
+		    this.scene.add(this.light4);
+            var light5 = new THREE.SpotLight(0x111111,3);
+		    light5.position.set(12,12,80);
+		    //this.scene.add(light3);
+            
+            //Naxo says: dejé esta luz para que se viera completo, hay que sacarla para que Fabián ponga las suyas :P.
+            var ambient_light = new THREE.AmbientLight(0x333333);
 		    //this.scene.add(ambient_light);
-            this.pointLightModel = new THREE.Mesh( new THREE.SphereGeometry( 0.5 ), new THREE.MeshBasicMaterial( { color: 0xff0000 } ) );
-            this.pointLightModel.position = light1.position;
-		    this.scene.add( this.pointLightModel );
-            this.pointLightModel2 = new THREE.Mesh( new THREE.SphereGeometry( 0.5 ), new THREE.MeshBasicMaterial( { color: 0xff0000 } ) );
-            this.pointLightModel2.position = light3.position;
-		    this.scene.add( this.pointLightModel2 );
-		    //------------------------------- end lights -------------------------------
+            // esfera para "ver" la luz puntual
+        this.pointLightModel = new THREE.Mesh( new THREE.SphereGeometry( 0.5 ), new THREE.MeshBasicMaterial( { color: 0xff0000 } ) );
+        this.pointLightModel.position = this.light4.position;
+		this.scene.add( this.pointLightModel );
+            //------------------------------- end lights -------------------------------
         
             //------------------------------- controles -------------------------------
             this.controls = new THREE.OrbitControls(this.camera);
@@ -106,7 +106,7 @@ class World {
         var delta = this.clock.getDelta(),
 		time = this.clock.getElapsedTime() * 5;
 		this.controls.update( delta );
-		this.checkBounds();
+        //this.checkBounds();
 		this.boids.update(delta);
 
         this.renderer.render(this.scene, this.camera);        
