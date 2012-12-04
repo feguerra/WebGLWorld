@@ -14,8 +14,11 @@ class World {
     private canvasHeight = 480;
     private scene; 
     private camera; 
-    private camera_pos_init;
-    private camera_rot_init;
+    private camera_pos_init = new THREE.Vector3(0,10,10);
+    private camera_rot_init = new THREE.Vector3(0,0,0);
+    private camera_max_x = 20;
+    private camera_max_y = 20;
+    private camera_max_z = 20;
     private mesh;
     private renderer;
     private controls;
@@ -25,23 +28,21 @@ class World {
     constructor() {
 
         $("#reset_button").click(() =>{ this.resetCamera(); });
+        $("#switch_camera_button").click(() =>{ this.switchCameraControls(); });
             
         this.camera = new THREE.PerspectiveCamera(75, this.canvasWidth/this.canvasHeight, 1, 10000);
-        this.camera_pos_init = new THREE.Vector3(0,20,20)
-        this.camera_rot_init = new THREE.Vector3(0,0,0)
         
         this.renderer = new THREE.WebGLRenderer();
         this.renderer.setSize(this.canvasWidth, this.canvasHeight);
         $('#canvas-wrapper').append($(this.renderer.domElement));
         this.scene = new THREE.Scene();
         var loader = new THREE.SceneLoader();
-
-		loader.load( "models/sandLandscapeCeilingBig/SandLandscape_big.js", ( loaded ) => {
         loader.callbackProgress = function (progress, result) {
             var total = progress.totalModels + progress.totalTextures;
 			var loaded = progress.loadedModels + progress.loadedTextures;
             $("#scene_bar").attr("style", "width: "+loaded/total*100+"%;");
         }
+		loader.load( "models/sandLandscapeCeilingBig/SandLandscape_big.js", ( loaded ) => {
             this.camera = loaded.currentCamera;
             this.resetCamera();
 			this.camera.updateProjectionMatrix();
@@ -52,9 +53,10 @@ class World {
 		    var light = new THREE.DirectionalLight(0xffffff, 2);
 		    light.position.set(-40,-20,10);
 		    this.scene.add(light);
-		    var asdf = new THREE.AmbientLight(0x444444);
-		    this.scene.add(asdf);
-            //------------------------------- end lights -------------------------------
+            //Naxo says: dejé esta luz para que se viera completo, hay que sacarla para que Fabián ponga las suyas :P.
+            var ambient_light = new THREE.AmbientLight(0x222222);
+		    this.scene.add(ambient_light);
+		    //------------------------------- end lights -------------------------------
         
             //------------------------------- controles -------------------------------
             this.controls = new THREE.OrbitControls(this.camera);
@@ -76,7 +78,7 @@ class World {
         var delta = this.clock.getDelta(),
 		time = this.clock.getElapsedTime() * 5;
 		this.controls.update( delta );
-
+        this.checkBounds();
 		this.boids.update(delta);
 
         this.renderer.render(this.scene, this.camera);        
@@ -87,15 +89,35 @@ class World {
         this.camera.rotation.set(this.camera_rot_init.x,this.camera_rot_init.y,this.camera_rot_init.z);
     }
 
-    OrbitCameraControls() {
-        this.controls = new THREE.OrbitControls(this.camera);
+    switchCameraControls() {
+        if (this.controls instanceof THREE.FirstPersonControls) {
+            this.controls = new THREE.OrbitControls(this.camera);
+        }
+        else if (this.controls instanceof THREE.OrbitControls) {
+            this.controls = new THREE.FirstPersonControls( this.camera );
+		    this.controls.movementSpeed = 15;
+		    this.controls.lookSpeed = 0.02;
+		    this.controls.noFly = true;
+		    this.controls.lookVertical = true;
+        }
     }
 
-    FirspersonCameraControls() {
-    //this.controls = new THREE.FirstPersonControls( this.camera );
-		    //this.controls.movementSpeed = 30;
-		    //this.controls.lookSpeed = 0.005;
-		    //this.controls.noFly = true;
-		    //this.controls.lookVertical = true;
+    checkBounds() { 
+        var camera_x = this.camera.position.x;
+        var camera_y = this.camera.position.y;
+        var camera_z = this.camera.position.z;
+
+        if(camera_x<-this.camera_max_x)
+            this.camera.position.x = -this.camera_max_x;
+        else if(camera_x>this.camera_max_x)
+            this.camera.position.x = this.camera_max_x;
+        if(camera_y<-this.camera_max_y)
+            this.camera.position.y = -this.camera_max_y;
+        else if(camera_y>this.camera_max_y)
+            this.camera.position.y = this.camera_max_y;
+            if(camera_z<-this.camera_max_z)
+            this.camera.position.z = -this.camera_max_z;
+        else if(camera_z>this.camera_max_z)
+            this.camera.position.z = this.camera_max_z;
     }
 }

@@ -296,7 +296,7 @@ var Boids = (function () {
                 callback();
             }
         };
-        callback();
+        lazy_wait();
     };
     Boids.prototype.getModel = function () {
         throw new DOMException();
@@ -323,24 +323,30 @@ var World = (function () {
         var _this = this;
         this.canvasWidth = window.innerWidth;
         this.canvasHeight = 480;
+        this.camera_pos_init = new THREE.Vector3(0, 10, 10);
+        this.camera_rot_init = new THREE.Vector3(0, 0, 0);
+        this.camera_max_x = 20;
+        this.camera_max_y = 20;
+        this.camera_max_z = 20;
         this.clock = new THREE.Clock();
         $("#reset_button").click(function () {
             _this.resetCamera();
         });
+        $("#switch_camera_button").click(function () {
+            _this.switchCameraControls();
+        });
         this.camera = new THREE.PerspectiveCamera(75, this.canvasWidth / this.canvasHeight, 1, 10000);
-        this.camera_pos_init = new THREE.Vector3(0, 20, 20);
-        this.camera_rot_init = new THREE.Vector3(0, 0, 0);
         this.renderer = new THREE.WebGLRenderer();
         this.renderer.setSize(this.canvasWidth, this.canvasHeight);
         $('#canvas-wrapper').append($(this.renderer.domElement));
         this.scene = new THREE.Scene();
         var loader = new THREE.SceneLoader();
+        loader.callbackProgress = function (progress, result) {
+            var total = progress.totalModels + progress.totalTextures;
+            var loaded = progress.loadedModels + progress.loadedTextures;
+            $("#scene_bar").attr("style", "width: " + loaded / total * 100 + "%;");
+        };
         loader.load("models/sandLandscapeCeilingBig/SandLandscape_big.js", function (loaded) {
-            loader.callbackProgress = function (progress, result) {
-                var total = progress.totalModels + progress.totalTextures;
-                var loaded = progress.loadedModels + progress.loadedTextures;
-                $("#scene_bar").attr("style", "width: " + loaded / total * 100 + "%;");
-            };
             _this.camera = loaded.currentCamera;
             _this.resetCamera();
             _this.camera.updateProjectionMatrix();
@@ -349,8 +355,8 @@ var World = (function () {
             var light = new THREE.DirectionalLight(16777215, 2);
             light.position.set(-40, -20, 10);
             _this.scene.add(light);
-            var asdf = new THREE.AmbientLight(4473924);
-            _this.scene.add(asdf);
+            var ambient_light = new THREE.AmbientLight(2236962);
+            _this.scene.add(ambient_light);
             _this.controls = new THREE.OrbitControls(_this.camera);
             _this.boids = new Boids();
             _this.boids.loadModel(_this.scene, function () {
@@ -367,6 +373,7 @@ var World = (function () {
         var time = this.clock.getElapsedTime() * 5;
 
         this.controls.update(delta);
+        this.checkBounds();
         this.boids.update(delta);
         this.renderer.render(this.scene, this.camera);
     };
@@ -374,10 +381,44 @@ var World = (function () {
         this.camera.position.set(this.camera_pos_init.x, this.camera_pos_init.y, this.camera_pos_init.z);
         this.camera.rotation.set(this.camera_rot_init.x, this.camera_rot_init.y, this.camera_rot_init.z);
     };
-    World.prototype.OrbitCameraControls = function () {
-        this.controls = new THREE.OrbitControls(this.camera);
+    World.prototype.switchCameraControls = function () {
+        if(this.controls instanceof THREE.FirstPersonControls) {
+            this.controls = new THREE.OrbitControls(this.camera);
+        } else {
+            if(this.controls instanceof THREE.OrbitControls) {
+                this.controls = new THREE.FirstPersonControls(this.camera);
+                this.controls.movementSpeed = 15;
+                this.controls.lookSpeed = 0.02;
+                this.controls.noFly = true;
+                this.controls.lookVertical = true;
+            }
+        }
     };
-    World.prototype.FirspersonCameraControls = function () {
+    World.prototype.checkBounds = function () {
+        var camera_x = this.camera.position.x;
+        var camera_y = this.camera.position.y;
+        var camera_z = this.camera.position.z;
+        if(camera_x < -this.camera_max_x) {
+            this.camera.position.x = -this.camera_max_x;
+        } else {
+            if(camera_x > this.camera_max_x) {
+                this.camera.position.x = this.camera_max_x;
+            }
+        }
+        if(camera_y < -this.camera_max_y) {
+            this.camera.position.y = -this.camera_max_y;
+        } else {
+            if(camera_y > this.camera_max_y) {
+                this.camera.position.y = this.camera_max_y;
+            }
+        }
+        if(camera_z < -this.camera_max_z) {
+            this.camera.position.z = -this.camera_max_z;
+        } else {
+            if(camera_z > this.camera_max_z) {
+                this.camera.position.z = this.camera_max_z;
+            }
+        }
     };
     return World;
 })();

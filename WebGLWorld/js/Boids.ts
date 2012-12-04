@@ -49,8 +49,8 @@ class Boids implements IModel {
                 callback();
         }
 
-        //lazy_wait();
-        callback();
+        lazy_wait();
+        //callback();
         /**/
     }
 
