@@ -22,7 +22,7 @@ class Bird implements IModel {
     private _max_rotation = Math.PI / 16;
 
     private _scale = 0.8;
-    private _max_speed = .6;
+    private _max_speed = .3;
    
     private _avoidWalls = true;
     
@@ -197,7 +197,7 @@ class Bird implements IModel {
     }
     
     update(delta) {
-        this.model.updateAnimation(1000 * delta);
+        this.model.updateAnimation(500 * delta);
         this.num_frames_pass++;
         if (this.num_frames_pass == this.num_frames_skip) {
 

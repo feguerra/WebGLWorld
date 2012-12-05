@@ -30,6 +30,8 @@
       <DependentUpon>app_fco.ts</DependentUpon>
     </Content>
     <Content Include="fisica.html" />
+    <Content Include="js\Horse.ts" />
+    <Content Include="js\Horses.ts" />
     <Content Include="index.html" />
     <Content Include="app.js">
       <DependentUpon>app.ts</DependentUpon>

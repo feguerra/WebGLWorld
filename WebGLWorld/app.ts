@@ -2,6 +2,7 @@
 /// <reference path="vendor/three.d.ts" />
 /// <reference path="js/terreno.ts" />
 /// <reference path="js/Boids.ts" />
+/// <reference path="js/Horses.ts" />
 var world;
 // Codigo inicializacion
 $(document).ready(function() {
@@ -27,11 +28,7 @@ class World {
     private controls;
     private clock = new THREE.Clock();
     private boids : Boids;
-
-    private pointLightModel1;
-    private pointLightModel2;
-    private pointLightModel3;
-    private pointLightModel4;
+    private horses: Horses;
     private light1;
     private light2;
     private light3;
@@ -60,7 +57,7 @@ class World {
             this.resetCamera();
 			this.camera.updateProjectionMatrix();
             this.scene = loaded.scene;
-            this.scene.fog = new THREE.Fog(0xffffff, 40, 150);
+            this.scene.fog = new THREE.Fog(0x999999, 40, 90);
             this.renderer.setClearColor( loaded.bgColor, loaded.bgAlpha );
 
             //------------------------------- lights -------------------------------
@@ -77,13 +74,12 @@ class World {
             this.light4.position.set(4,-22,-15);
 		    this.scene.add(this.light4);
             this.light5 = new THREE.SpotLight(0xffffff,2);
-		    this.light5.position.set(180,50,100);
+            this.light5.castShadow = true;
+            this.light5.recieveShadow = true;
+            this.light5.position.set(180,50,100);
 		    this.scene.add(this.light5);
             
-            this.pointLightModel1 = new THREE.Mesh( new THREE.SphereGeometry( 0.5 ), new THREE.MeshBasicMaterial( { color: 0xff0000 } ) );
-            this.pointLightModel1.position = this.light5.position;
-		    this.scene.add( this.pointLightModel1 );
-            //------------------------------- end lights -------------------------------
+             //------------------------------- end lights -------------------------------
         
             //------------------------------- controles -------------------------------
             this.controls = new THREE.OrbitControls(this.camera);
@@ -95,6 +91,12 @@ class World {
                 this.animate();
             });
             //------------------------------- end boids -------------------------------        
+            //------------------------------- HORSES -------------------------------
+            this.horses = new Horses();
+            this.horses.loadModel(this.scene, () => {
+                this.animate();
+            });
+            //------------------------------- end boids -------------------------------      
       });
     }
 
@@ -107,7 +109,7 @@ class World {
 		this.controls.update( delta );
         this.checkBounds();
 		this.boids.update(delta);
-
+		this.horses.update(delta);
         this.renderer.render(this.scene, this.camera);        
     }
 

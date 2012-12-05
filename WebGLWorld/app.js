@@ -32,7 +32,7 @@ var Bird = (function () {
         this.num_frames_skip = 3;
         this._max_rotation = Math.PI / 16;
         this._scale = 0.8;
-        this._max_speed = 0.6;
+        this._max_speed = 0.3;
         this._avoidWalls = true;
         this._reach_ponderation = 0.1;
         this._separation_radio = 5;
@@ -201,7 +201,7 @@ var Bird = (function () {
         return posSum.multiplyScalar(this._pond_separation);
     };
     Bird.prototype.update = function (delta) {
-        this.model.updateAnimation(1000 * delta);
+        this.model.updateAnimation(500 * delta);
         this.num_frames_pass++;
         if(this.num_frames_pass == this.num_frames_skip) {
             this.model.position.set(this.position.x, this.position.y, this.position.z);
@@ -291,6 +291,115 @@ var Boids = (function () {
     };
     return Boids;
 })();
+var Horse = (function () {
+    function Horse() {
+        this.x_max = 0;
+        this.x_world_length = 0;
+        this.y_max = 0;
+        this._scale = 0.01;
+        this.position = new THREE.Vector3();
+    }
+    Horse.prototype.setRandPos = function () {
+        this.position.x = -this.x_world_length / 2 + Math.random() * 10;
+        this.position.y = Math.random() * 20;
+        this.position.z = -10;
+    };
+    Horse.prototype.loadModel = function (model_path, scene, callback) {
+        var loader = new THREE.JSONLoader();
+        var horse = this;
+        loader.load(model_path, function (geometry) {
+            geometry.materials[0].morphTargets = true;
+            geometry.materials[0].morphNormals = true;
+            geometry.computeMorphNormals();
+            var material = new THREE.MeshLambertMaterial({
+                color: 16755285,
+                morphTargets: true,
+                vertexColors: THREE.FaceColors
+            });
+            var meshAnim = new THREE.MorphAnimMesh(geometry, material);
+            meshAnim.duration = 1000;
+            meshAnim.castShadow = true;
+            meshAnim.recieveShadow = true;
+            var s = horse._scale;
+            meshAnim.scale.set(s, s, s);
+            horse.setRandPos();
+            meshAnim.position.set(horse.position.x, horse.position.y, horse.position.z);
+            meshAnim.rotation.set(0, Math.PI / 2, Math.PI / 2);
+            horse.model = meshAnim;
+            scene.add(horse.model);
+            callback();
+        });
+    };
+    Horse.prototype.morphColorsToFaceColors = function (geometry) {
+        if(geometry.morphColors && geometry.morphColors.length) {
+            var colorMap = geometry.morphColors[0];
+            for(var i = 0; i < colorMap.colors.length; i++) {
+                geometry.faces[i].color = colorMap.colors[i];
+                THREE.ColorUtils.adjustHSV(geometry.faces[i].color, 0, -0.1, 0);
+            }
+        }
+    };
+    Horse.prototype.checkBounds = function () {
+        if(this.position.x > this.x_max) {
+            this.position.x -= this.x_world_length;
+            this.position.y = Math.random() * 20;
+        }
+    };
+    Horse.prototype.update = function (delta) {
+        this.model.updateAnimation(1000 * delta);
+        this.position.x += 0.1;
+        this.checkBounds();
+        this.model.position = this.position;
+    };
+    Horse.prototype.getModel = function () {
+        return this.model;
+    };
+    Horse.prototype.setWorldSize = function (x_max, x_world) {
+        this.x_max = x_max;
+        this.x_world_length = x_world;
+    };
+    return Horse;
+})();
+var Horses = (function () {
+    function Horses() {
+        this._num_birds = 10;
+        this.horses = [];
+        for(var i = 0; i < this._num_birds; i++) {
+            var boid = this.horses[i] = new Horse();
+            boid.setWorldSize(35, 60);
+        }
+    }
+    Horses.prototype.loadModel = function (scene, callback) {
+        var _this = this;
+        var count = 0;
+        for(var i = 0; i < this._num_birds; i++) {
+            var model_path = "models/horse.js";
+            this.horses[i].loadModel(model_path, scene, function () {
+            });
+        }
+        var lazy_wait = function () {
+            if(count < _this._num_birds) {
+                setTimeout(lazy_wait, 1000);
+            } else {
+                callback();
+            }
+        };
+        lazy_wait();
+    };
+    Horses.prototype.getModel = function () {
+        throw new DOMException();
+    };
+    Horses.prototype.update = function (delta) {
+        var il = this.horses.length;
+        for(var i = 0; i < il; i++) {
+            var horse = this.horses[i];
+            if(horse.getModel() != undefined) {
+                horse.update(delta);
+            }
+        }
+    };
+    return Horses;
+})();
 var world;
 $(document).ready(function () {
     world = new World();
@@ -331,7 +440,7 @@ var World = (function () {
             _this.resetCamera();
             _this.camera.updateProjectionMatrix();
             _this.scene = loaded.scene;
-            _this.scene.fog = new THREE.Fog(16777215, 40, 150);
+            _this.scene.fog = new THREE.Fog(10066329, 40, 90);
             _this.renderer.setClearColor(loaded.bgColor, loaded.bgAlpha);
             _this.light1 = new THREE.PointLight(16777215, 0.8);
             _this.light1.position.set(-30, 12, -15);
@@ -346,16 +455,17 @@ var World = (function () {
             _this.light4.position.set(4, -22, -15);
             _this.scene.add(_this.light4);
             _this.light5 = new THREE.SpotLight(16777215, 2);
+            _this.light5.castShadow = true;
+            _this.light5.recieveShadow = true;
             _this.light5.position.set(180, 50, 100);
             _this.scene.add(_this.light5);
-            _this.pointLightModel1 = new THREE.Mesh(new THREE.SphereGeometry(0.5), new THREE.MeshBasicMaterial({
-                color: 16711680
-            }));
-            _this.pointLightModel1.position = _this.light5.position;
-            _this.scene.add(_this.pointLightModel1);
             _this.controls = new THREE.OrbitControls(_this.camera);
             _this.boids = new Boids();
             _this.boids.loadModel(_this.scene, function () {
+                _this.animate();
+            });
+            _this.horses = new Horses();
+            _this.horses.loadModel(_this.scene, function () {
                 _this.animate();
             });
         });
@@ -371,6 +481,7 @@ var World = (function () {
         this.controls.update(delta);
         this.checkBounds();
         this.boids.update(delta);
+        this.horses.update(delta);
         this.renderer.render(this.scene, this.camera);
     };
     World.prototype.resetCamera = function () {
