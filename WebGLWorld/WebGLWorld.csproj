@@ -21,117 +21,97 @@
   </PropertyGroup>
   <ItemGroup>
     <Content Include="app.css" />
-    <Content Include="app_pablo.ts" />
-    <Content Include="app_pablo.js">
-      <DependentUpon>app_pablo.ts</DependentUpon>
-    </Content>
-    <Content Include="app_fco.ts" />
-    <Content Include="app_fco.js">
-      <DependentUpon>app_fco.ts</DependentUpon>
-    </Content>
-    <Content Include="fisica.html" />
     <Content Include="js\Horse.ts" />
     <Content Include="js\Horses.ts" />
     <Content Include="index.html" />
     <Content Include="app.js">
       <DependentUpon>app.ts</DependentUpon>
     </Content>
-    <TypeScriptCompile Include="js\terreno.ts" />
-    <Content Include="index_pablo.html" />
-    <TypeScriptCompile Include="js\monkey.ts" />
-    <TypeScriptCompile Include="js\physicModel.ts" />
-    <TypeScriptCompile Include="js\physicWorld.ts" />
     <Content Include="js\Bird.ts" />
     <Content Include="js\Boids.ts" />
     <Content Include="js\IModel.ts" />
-    <Content Include="models\butterfly\textures\butterflywings.png" />
-    <Content Include="models\js2\Sand Ripples 05.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="models\js2\SandLandscape.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="models\js2\SandLandscape.Landscape.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="models\js2\SandLandscape.Sky 01.JPG.001.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="models\js2\SandLandscape.Stalk.001.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="models\js2\SandLandscape.Stalk.002.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="models\js2\SandLandscape.Stalk.003.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="models\js2\SandLandscape.Stalk.004.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="models\js2\SandLandscape.Stalk.005.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="models\js2\SandLandscape.Stalk.006.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="models\js2\SandLandscape.Stalk.007.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="models\js2\SandLandscape.Stalk.008.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="models\js2\SandLandscape.Stalk.009.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="models\js2\SandLandscape.Stalk.010.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="models\js2\SandLandscape.Stalk.011.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="models\js2\SandLandscape.Stalk.012.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="models\js2\SandLandscape.Stalk.013.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="models\js2\SandLandscape.Stalk.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="models\js2\Sky 01.JPG">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <Content Include="models\horse.js" />
     <Content Include="models\MarioBros\rig_mario.js" />
-    <Content Include="models\monster\monster.jpg" />
-    <Content Include="models\scene\our_scene.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <Content Include="models\sandLandscapeCeilingBig\Sand Ripples 05.jpg" />
+    <Content Include="models\sandLandscapeCeilingBig\SandLandscape_big.js" />
+    <Content Include="models\sandLandscapeCeilingBig\SandLandscape_big.Landscape.js" />
+    <Content Include="models\sandLandscapeCeilingBig\SandLandscape_big.Plane.js" />
+    <Content Include="models\sandLandscapeCeilingBig\SandLandscape_big.Sky 01.JPG.000.js" />
+    <Content Include="models\sandLandscapeCeilingBig\SandLandscape_big.Sky 01.JPG.001.js" />
+    <Content Include="models\sandLandscapeCeilingBig\SandLandscape_big.Sky 01.JPG.002.js" />
+    <Content Include="models\sandLandscapeCeilingBig\SandLandscape_big.Sky 01.JPG.003.js" />
+    <Content Include="models\sandLandscapeCeilingBig\SandLandscape_big.Stalk.001.js" />
+    <Content Include="models\sandLandscapeCeilingBig\SandLandscape_big.Stalk.002.js" />
+    <Content Include="models\sandLandscapeCeilingBig\SandLandscape_big.Stalk.003.js" />
+    <Content Include="models\sandLandscapeCeilingBig\SandLandscape_big.Stalk.004.js" />
+    <Content Include="models\sandLandscapeCeilingBig\SandLandscape_big.Stalk.005.js" />
+    <Content Include="models\sandLandscapeCeilingBig\SandLandscape_big.Stalk.006.js" />
+    <Content Include="models\sandLandscapeCeilingBig\SandLandscape_big.Stalk.007.js" />
+    <Content Include="models\sandLandscapeCeilingBig\SandLandscape_big.Stalk.008.js" />
+    <Content Include="models\sandLandscapeCeilingBig\SandLandscape_big.Stalk.009.js" />
+    <Content Include="models\sandLandscapeCeilingBig\SandLandscape_big.Stalk.010.js" />
+    <Content Include="models\sandLandscapeCeilingBig\SandLandscape_big.Stalk.011.js" />
+    <Content Include="models\sandLandscapeCeilingBig\SandLandscape_big.Stalk.012.js" />
+    <Content Include="models\sandLandscapeCeilingBig\SandLandscape_big.Stalk.013.js" />
+    <Content Include="models\sandLandscapeCeilingBig\SandLandscape_big.Stalk.js" />
+    <Content Include="models\sandLandscapeCeilingBig\SandLandscape_big2.js" />
+    <Content Include="models\sandLandscapeCeilingBig\Sky 01.JPG" />
+    <Content Include="models\sandLandscapeCeiling\Sand Ripples 05.jpg" />
+    <Content Include="models\sandLandscapeCeiling\SandLandscape.js" />
+    <Content Include="models\sandLandscapeCeiling\SandLandscape.Landscape.js" />
+    <Content Include="models\sandLandscapeCeiling\SandLandscape.Plane.js" />
+    <Content Include="models\sandLandscapeCeiling\SandLandscape.Sky 01.JPG.000.js" />
+    <Content Include="models\sandLandscapeCeiling\SandLandscape.Sky 01.JPG.001.js" />
+    <Content Include="models\sandLandscapeCeiling\SandLandscape.Sky 01.JPG.002.js" />
+    <Content Include="models\sandLandscapeCeiling\SandLandscape.Sky 01.JPG.003.js" />
+    <Content Include="models\sandLandscapeCeiling\SandLandscape.Stalk.001.js" />
+    <Content Include="models\sandLandscapeCeiling\SandLandscape.Stalk.002.js" />
+    <Content Include="models\sandLandscapeCeiling\SandLandscape.Stalk.003.js" />
+    <Content Include="models\sandLandscapeCeiling\SandLandscape.Stalk.004.js" />
+    <Content Include="models\sandLandscapeCeiling\SandLandscape.Stalk.005.js" />
+    <Content Include="models\sandLandscapeCeiling\SandLandscape.Stalk.006.js" />
+    <Content Include="models\sandLandscapeCeiling\SandLandscape.Stalk.007.js" />
+    <Content Include="models\sandLandscapeCeiling\SandLandscape.Stalk.008.js" />
+    <Content Include="models\sandLandscapeCeiling\SandLandscape.Stalk.009.js" />
+    <Content Include="models\sandLandscapeCeiling\SandLandscape.Stalk.010.js" />
+    <Content Include="models\sandLandscapeCeiling\SandLandscape.Stalk.011.js" />
+    <Content Include="models\sandLandscapeCeiling\SandLandscape.Stalk.012.js" />
+    <Content Include="models\sandLandscapeCeiling\SandLandscape.Stalk.013.js" />
+    <Content Include="models\sandLandscapeCeiling\SandLandscape.Stalk.js" />
+    <Content Include="models\sandLandscapeCeiling\Sky 01.JPG" />
+    <Content Include="models\sandLandscapeCube\Sand Ripples 05.jpg" />
+    <Content Include="models\sandLandscapeCube\SandLandscape.js" />
+    <Content Include="models\sandLandscapeCube\SandLandscape.Landscape.js" />
+    <Content Include="models\sandLandscapeCube\SandLandscape.Sky 01.JPG.000.js" />
+    <Content Include="models\sandLandscapeCube\SandLandscape.Sky 01.JPG.001.js" />
+    <Content Include="models\sandLandscapeCube\SandLandscape.Sky 01.JPG.002.js" />
+    <Content Include="models\sandLandscapeCube\SandLandscape.Sky 01.JPG.003.js" />
+    <Content Include="models\sandLandscapeCube\SandLandscape.Stalk.001.js" />
+    <Content Include="models\sandLandscapeCube\SandLandscape.Stalk.002.js" />
+    <Content Include="models\sandLandscapeCube\SandLandscape.Stalk.003.js" />
+    <Content Include="models\sandLandscapeCube\SandLandscape.Stalk.004.js" />
+    <Content Include="models\sandLandscapeCube\SandLandscape.Stalk.005.js" />
+    <Content Include="models\sandLandscapeCube\SandLandscape.Stalk.006.js" />
+    <Content Include="models\sandLandscapeCube\SandLandscape.Stalk.007.js" />
+    <Content Include="models\sandLandscapeCube\SandLandscape.Stalk.008.js" />
+    <Content Include="models\sandLandscapeCube\SandLandscape.Stalk.009.js" />
+    <Content Include="models\sandLandscapeCube\SandLandscape.Stalk.010.js" />
+    <Content Include="models\sandLandscapeCube\SandLandscape.Stalk.011.js" />
+    <Content Include="models\sandLandscapeCube\SandLandscape.Stalk.012.js" />
+    <Content Include="models\sandLandscapeCube\SandLandscape.Stalk.013.js" />
+    <Content Include="models\sandLandscapeCube\SandLandscape.Stalk.js" />
+    <Content Include="models\sandLandscapeCube\Sky 01.JPG" />
     <Content Include="vendor\controls\FirstPersonControls.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="vendor\controls\FlyControls.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="models\monster\readme.txt" />
-    <Content Include="vendor\ColladaLoader.js" />
     <Content Include="vendor\jquery-1.8.2.js" />
     <Content Include="vendor\jquery-1.8.2.min.js">
       <DependentUpon>jquery-1.8.2.js</DependentUpon>
     </Content>
     <Content Include="vendor\jquery.d.ts" />
-    <Content Include="vendor\Physijs\ammo.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="vendor\Physijs\physi.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="vendor\Physijs\physijs.d.ts">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="vendor\Physijs\physijs_worker.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="vendor\three.js" />
     <Content Include="vendor\three.min.js">
       <DependentUpon>three.js</DependentUpon>
@@ -147,17 +127,6 @@
     <Content Include="web.config" />
     <Content Include="web.Release.config">
       <DependentUpon>web.config</DependentUpon>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="models\monster\monster.dae" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="models\butterfly\butterfly2.dae" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="models\monkey\monkey.dae">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
   <PropertyGroup>
@@ -192,9 +161,6 @@
     <!-- <Exec Command="&quot;$(PROGRAMFILES)\Microsoft SDKs\TypeScript\0.8.0.0\tsc&quot; @(TypeScriptCompile ->'&quot;%(fullpath)&quot;', ' ')" /> -->
     <Exec Command="echo Building app.js..." />
     <Exec Command="&quot;$(PROGRAMFILES)\Microsoft SDKs\TypeScript\0.8.0.0\tsc&quot; --out app.js app.ts" />
-    <Exec Command="echo Building app_pablo.js..." />
-    <Exec Command="&quot;$(PROGRAMFILES)\Microsoft SDKs\TypeScript\0.8.0.0\tsc&quot; --out app_pablo.js app_pablo.ts" />
-    <Exec Command="echo Building app_fco.js..." />
-    <Exec Command="&quot;$(PROGRAMFILES)\Microsoft SDKs\TypeScript\0.8.0.0\tsc&quot; --out app_fco.js app_fco.ts" />
+   
   </Target>
 </Project>

@@ -22,7 +22,7 @@ class Bird implements IModel {
     private _max_rotation = Math.PI / 16;
 
     private _scale = 0.8;
-    private _max_speed = .3;
+    private _max_speed = .1;
    
     private _avoidWalls = true;
     
@@ -204,10 +204,10 @@ class Bird implements IModel {
             this.model.position.set(this.position.x, this.position.y, this.position.z);
 
             var y_rotation = Math.PI / 2 - Math.atan2(-this.velocity.z, this.velocity.x);
-            if(this._max_rotation >= Math.abs(this.model.rotation.y-y_rotation))
-                this.model.rotation.y = y_rotation;
-            else
-                 this.model.rotation.y = y_rotation%this._max_rotation;
+            //if(this._max_rotation >= Math.abs(this.model.rotation.y-y_rotation))
+            //    this.model.rotation.y = y_rotation;
+            //else
+            //     this.model.rotation.y = y_rotation%this._max_rotation;
             //this.model.rotation.z = 3 * Math.PI / 2 - Math.asin(this.velocity.y / this.velocity.length());
             
             this.num_frames_pass = 0;

@@ -1,6 +1,5 @@
 /// <reference path="vendor/jquery.d.ts" />
 /// <reference path="vendor/three.d.ts" />
-/// <reference path="js/terreno.ts" />
 /// <reference path="js/Boids.ts" />
 /// <reference path="js/Horses.ts" />
 var world;

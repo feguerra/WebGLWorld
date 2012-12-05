@@ -1,25 +1,3 @@
-var Terreno = (function () {
-    function Terreno() {
-        this.size = 14;
-        this.step = 1;
-    }
-    Terreno.prototype.load = function (callback) {
-        var geometry = new THREE.Geometry();
-        var material = new THREE.LineBasicMaterial({
-            color: 13421772,
-            opacity: 0.2
-        });
-        for(var i = -this.size; i <= this.size; i += this.step) {
-            geometry.vertices.push(new THREE.Vector3(-this.size, -0.04, i));
-            geometry.vertices.push(new THREE.Vector3(this.size, -0.04, i));
-            geometry.vertices.push(new THREE.Vector3(i, -0.04, -this.size));
-            geometry.vertices.push(new THREE.Vector3(i, -0.04, this.size));
-        }
-        this.mesh = new THREE.Line(geometry, material, THREE.LinePieces);
-        callback();
-    };
-    return Terreno;
-})();
 var Bird = (function () {
     function Bird() {
         this._width_max = 0;
@@ -32,7 +10,7 @@ var Bird = (function () {
         this.num_frames_skip = 3;
         this._max_rotation = Math.PI / 16;
         this._scale = 0.8;
-        this._max_speed = 0.3;
+        this._max_speed = 0.1;
         this._avoidWalls = true;
         this._reach_ponderation = 0.1;
         this._separation_radio = 5;
@@ -206,11 +184,6 @@ var Bird = (function () {
         if(this.num_frames_pass == this.num_frames_skip) {
             this.model.position.set(this.position.x, this.position.y, this.position.z);
             var y_rotation = Math.PI / 2 - Math.atan2(-this.velocity.z, this.velocity.x);
-            if(this._max_rotation >= Math.abs(this.model.rotation.y - y_rotation)) {
-                this.model.rotation.y = y_rotation;
-            } else {
-                this.model.rotation.y = y_rotation % this._max_rotation;
-            }
             this.num_frames_pass = 0;
         }
     };
