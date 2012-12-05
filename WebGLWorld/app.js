@@ -67,6 +67,8 @@ var Bird = (function () {
             var material = new THREE.MeshFaceMaterial();
             var meshAnim = new THREE.MorphAnimMesh(geometry, material);
             meshAnim.duration = 1000;
+            meshAnim.castShadow = true;
+            meshAnim.recieveShadow = true;
             var s = bird._scale;
             meshAnim.scale.set(s, s, s);
             meshAnim.position.set(bird.position.x, bird.position.y, bird.position.z);
@@ -234,7 +236,7 @@ var Bird = (function () {
 })();
 var Boids = (function () {
     function Boids() {
-        this._num_birds = 2;
+        this._num_birds = 12;
         this.boids = [];
         for(var i = 0; i < this._num_birds; i++) {
             var boid = this.boids[i] = new Bird();
@@ -329,22 +331,22 @@ var World = (function () {
             _this.resetCamera();
             _this.camera.updateProjectionMatrix();
             _this.scene = loaded.scene;
-            _this.scene.fog = new THREE.Fog(0, 1);
+            _this.scene.fog = new THREE.Fog(16777215, 40, 150);
             _this.renderer.setClearColor(loaded.bgColor, loaded.bgAlpha);
-            _this.light1 = new THREE.PointLight(16777215);
+            _this.light1 = new THREE.PointLight(16777215, 0.8);
             _this.light1.position.set(-30, 12, -15);
             _this.scene.add(_this.light1);
-            _this.light2 = new THREE.PointLight(16777215);
+            _this.light2 = new THREE.PointLight(16777215, 0.8);
             _this.light2.position.set(34, 12, -15);
             _this.scene.add(_this.light2);
-            _this.light3 = new THREE.PointLight(16777215);
+            _this.light3 = new THREE.PointLight(16777215, 0.8);
             _this.light3.position.set(4, 45, -15);
             _this.scene.add(_this.light3);
-            _this.light4 = new THREE.PointLight(16777215);
+            _this.light4 = new THREE.PointLight(16777215, 0.8);
             _this.light4.position.set(4, -22, -15);
             _this.scene.add(_this.light4);
-            _this.light5 = new THREE.SpotLight(16777215, 3);
-            _this.light5.position.set(90, 20, 80);
+            _this.light5 = new THREE.SpotLight(16777215, 2);
+            _this.light5.position.set(180, 50, 100);
             _this.scene.add(_this.light5);
             _this.pointLightModel1 = new THREE.Mesh(new THREE.SphereGeometry(0.5), new THREE.MeshBasicMaterial({
                 color: 16711680

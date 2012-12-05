@@ -67,7 +67,8 @@ class Bird implements IModel {
 					var material = new THREE.MeshFaceMaterial();
 					var meshAnim = new THREE.MorphAnimMesh( geometry, material );
 					meshAnim.duration = 1000;
-                    
+					meshAnim.castShadow = true;
+					meshAnim.recieveShadow = true;
 					var s = bird._scale;
 					meshAnim.scale.set( s, s, s );
 					meshAnim.position.set( bird.position.x, bird.position.y, bird.position.z );

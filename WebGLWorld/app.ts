@@ -60,24 +60,24 @@ class World {
             this.resetCamera();
 			this.camera.updateProjectionMatrix();
             this.scene = loaded.scene;
-            this.scene.fog = new THREE.Fog(0x000000, 1)
+            this.scene.fog = new THREE.Fog(0xffffff, 40, 150);
             this.renderer.setClearColor( loaded.bgColor, loaded.bgAlpha );
 
             //------------------------------- lights -------------------------------
-		    this.light1 = new THREE.PointLight(0xffffff);
+		    this.light1 = new THREE.PointLight(0xffffff,0.8);
 		    this.light1.position.set(-30,12,-15);
 		    this.scene.add(this.light1);
-            this.light2 = new THREE.PointLight(0xffffff);
+            this.light2 = new THREE.PointLight(0xffffff,0.8);
             this.light2.position.set(34,12,-15);
 		    this.scene.add(this.light2);
-            this.light3 = new THREE.PointLight(0xffffff);
+            this.light3 = new THREE.PointLight(0xffffff,0.8);
             this.light3.position.set(4,45,-15);
 		    this.scene.add(this.light3);
-            this.light4 = new THREE.PointLight(0xffffff);
+            this.light4 = new THREE.PointLight(0xffffff,0.8);
             this.light4.position.set(4,-22,-15);
 		    this.scene.add(this.light4);
-            this.light5 = new THREE.SpotLight(0xffffff,3);
-		    this.light5.position.set(90,20,80);
+            this.light5 = new THREE.SpotLight(0xffffff,2);
+		    this.light5.position.set(180,50,100);
 		    this.scene.add(this.light5);
             
             this.pointLightModel1 = new THREE.Mesh( new THREE.SphereGeometry( 0.5 ), new THREE.MeshBasicMaterial( { color: 0xff0000 } ) );
